@@ -7,7 +7,7 @@
 #include <iostream>
 
 int main() {
-    double inputs[] = {1.2, 5.1, 2.1};
+    double inputs[] = {1.0, 2.0, 3.0};
     double weights[] = {3.1, 2.1, 8.7};
     double bias = 3.0;
 
