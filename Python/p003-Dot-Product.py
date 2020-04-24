@@ -14,3 +14,17 @@ biases = [2.0, 3.0, 0.5]
 
 output = np.dot(weights, inputs) + biases
 print(output)
+
+# calculation using standart Python list
+layer_outputs: list = list()
+for index, weight in enumerate(weights):
+  layer_outputs.append(sum([(w * inputs[i]) for i, w in enumerate(weight)]) + biases[index])
+print(layer_outputs)
+
+# calculation using NumPy Array
+output_np = [sum(weight * np.array(inputs)) for weight in np.array(weights)] + np.array(biases)
+print(output_np)
+
+# calculation using Dot Product
+output = np.dot(weights, inputs) + biases
+print(output)
