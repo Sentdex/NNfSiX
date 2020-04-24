@@ -4,7 +4,9 @@ Create a basic neuron layer in Java
 Associated tutorial https://www.youtube.com/watch?v=lGLto9Xd7bU
 */
 
-class Neuron {
+import java.util.Arrays;
+
+class P002BasicNeuronLayer {
 	public static void main(String[] args) {
 		double[] inputs = {1, 2, 3, 2.5};
 		
@@ -19,6 +21,6 @@ class Neuron {
 		double[] output = {(inputs[0] * weights1[0] + inputs[1] * weights1[1] + inputs[2] * weights1[2] + bias1), 
 			           (inputs[0] * weights2[0] + inputs[1] * weights2[1] + inputs[2] * weights2[2] + bias2), 
 			           (inputs[0] * weights3[0] + inputs[1] * weights3[1] + inputs[2] * weights3[2] + bias3)};
-		System.out.println(output);
+		System.out.println(Arrays.toString(output));
 	}
 }
