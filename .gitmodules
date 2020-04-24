@@ -1,0 +1,4 @@
+[submodule "Awk"]
+	path = Awk
+	url = git@github.com:awk-utilities/machine-learning-examples.git
+	branch = master

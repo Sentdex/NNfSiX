@@ -1,0 +1,15 @@
+## See documentation,
+##  https://dependabot.com/docs/config-file/
+## Add or modify Organization settings via,
+##  https://github.com/marketplace/dependabot-preview
+
+
+version: 1
+## Updates .`gitmodules` file when available
+## Run `git submodule update --init --recursive --merge`
+##  to download tracked updates.
+update_configs:
+  - package_manager: "submodules"
+    directory: "/"
+    update_schedule: "live"
+    target_branch: "master"
