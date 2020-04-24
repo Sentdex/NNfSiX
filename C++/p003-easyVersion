@@ -1,0 +1,50 @@
+#include <iostream>
+#define Nimput 4 //number of input neurons
+
+#define Noutput 3 //number of output neurons
+
+using namespace std;
+
+//dot product function (two vectors)
+float dotproduct(float v1[], float v2[])
+{
+    float result = 0;
+    
+    for(int i=0; i<Nimput; i++)
+        result = result + v1[i]*v2[i];
+    
+    return result;
+}
+
+int main()
+{
+    //declarating and initializing data
+    float inputs[Nimput] = {1, 2, 3, 2.5};
+    
+    float weights[Noutput][Nimput] = {{0.2, 0.8, -0.5, 1},
+                                      {0.5, -0.91, 0.26, -0.5},
+                                      {-0.26, -0.27, 0.17, 0.87}};
+                          
+    
+    float biases[Noutput] = {2, 3, 0.5};
+    
+    float outputs[Noutput];
+    
+    
+    //operating
+    for(int i=0; i<Noutput; i++)
+        outputs[i] = dotproduct(inputs,weights[i]) + biases[i];
+             
+    
+    //printing output layer
+    cout << "Your output layer is: [" << outputs[0];
+    
+    for(int printCounter = 1; printCounter < Noutput; printCounter++)
+        cout << ", " << outputs[printCounter];
+        
+    cout << "]";
+    
+    
+    //return
+    return 0;
+}
