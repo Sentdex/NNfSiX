@@ -6,11 +6,12 @@
 
 #include <iostream>
 #include <vector>
-using std::vector;
+
+using namespace std;
 
 
-vector<double> dotProduct(vector<vector<double>> weights, vector<double> inputs) {
-	vector<double> outputs(weights.size());
+vector< double > dotProduct(vector< vector< double > > weights, vector< double > inputs) {
+	vector< double > outputs(weights.size());
 
 	for(int i = 0; i < weights.size(); i++) {
 		double output = 0;
@@ -23,8 +24,8 @@ vector<double> dotProduct(vector<vector<double>> weights, vector<double> inputs)
 	return outputs;
 }
 
-vector<double> add(vector<double> vector1, vector<double> vector2) {
-	vector<double> output(vector1.size());
+vector< double > add(vector< double > vector1, vector< double > vector2) {
+	vector< double > output(vector1.size());
 
 	for(int i = 0; i < vector1.size(); i++) {
 		output[i] = vector1[i] + vector2[i];
@@ -36,18 +37,18 @@ vector<double> add(vector<double> vector1, vector<double> vector2) {
 
 int main() {
 
-	vector<double> inputs = {1.0, 2.0, 3.0, 2.5};
+	vector< double > inputs = {1.0, 2.0, 3.0, 2.5};
 
-	vector<vector<double>> weights = {{0.2, 0.8, -0.5, 1.0},
-									  {0.5, -0.91, 0.26, -0.5},
-									  {-0.26, -0.27, 0.17, 0.87}};
+	vector< vector< double > > weights = {{0.2, 0.8, -0.5, 1.0},
+					      {0.5, -0.91, 0.26, -0.5},
+					      {-0.26, -0.27, 0.17, 0.87}};
 
-    vector<double> biases = {2.0, 3.0, 0.5};
+    	vector<double> biases = {2.0, 3.0, 0.5};
 
 	vector<double> output = add(dotProduct(weights, inputs), biases);
 
-	std::cout << "[";
-	std::cout << output[0] << ", ";
-	std::cout << output[1] << ", ";
-	std::cout << output[2] << "]" << std::endl;
+	cout << "[";
+	cout << output[0] << ", ";
+	cout << output[1] << ", ";
+	cout << output[2] << "]" << endl;
 }
