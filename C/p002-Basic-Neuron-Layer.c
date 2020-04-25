@@ -6,17 +6,17 @@
 #include <stdio.h>
 
 int main() {
-  float inputs[] = {1.0, 2.0, 3.0, 2.5};
+  double inputs[] = {1.0, 2.0, 3.0, 2.5};
 
-  float weights1[] = {0.2, 0.8, -0.5, 1.0};
-  float weights2[] = {0.5, -0.91, 0.26, -0.5};
-  float weights3[] = {-0.26, -0.27, 0.17, 0.87};
+  double weights1[] = {0.2, 0.8, -0.5, 1.0};
+  double weights2[] = {0.5, -0.91, 0.26, -0.5};
+  double weights3[] = {-0.26, -0.27, 0.17, 0.87};
 
-  float bias1 = 2.0;
-  float bias2 = 3.0;
-  float bias3 = 0.5;
+  double bias1 = 2.0;
+  double bias2 = 3.0;
+  double bias3 = 0.5;
 
-  float output[] = {
+  double output[] = {
       inputs[0] * weights1[0] + inputs[1] * weights1[1] +
           inputs[2] * weights1[2] + inputs[3] * weights1[3] + bias1,
 
