@@ -1,5 +1,5 @@
-multWeights :: [Double] -> [Double]  -> Double
-multWeights inputs weights = sum $ zipWith (*) inputs weights
+multWeights :: [Double] -> [Double] -> Double  -> Double
+multWeights inputs weights bias = sum  (zipWith (*) inputs weights) + bias
 
 inputs :: [Double]
 inputs = [1.2, 5.1, 2.1]
@@ -11,6 +11,6 @@ bias :: Double
 bias = 3.0
 
 output :: Double
-output = multWeights inputs weights + bias
+output = multWeights inputs weights bias
 
 main = print output
