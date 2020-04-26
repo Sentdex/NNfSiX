@@ -1,5 +1,5 @@
 multWeights :: [Double] -> [Double] -> Double  -> Double
-multWeights i w b = sum  (zipWith (*) i w) + b
+multWeights i w b = sum (zipWith (*) i w) + b
 
 layer :: [Double] -> [[Double]] -> [Double] -> [Double]
 layer i ws bs = zipWith (multWeights i) ws bs 
