@@ -1,17 +1,20 @@
 #include <iostream>
 #include <math.h>
 
+#define NUM_INPUTS 4
+#define NUM_OUTPUTS 3
+
 int main() {
   float *inputs, *weights1, *bias1, *weights2, *bias2, *weights3, *bias3, *output;
 
-  cudaMallocManaged(&inputs, 4*sizeof(float));
-  cudaMallocManaged(&weights1, 4*sizeof(float));
+  cudaMallocManaged(&inputs, NUM_INPUTS*sizeof(float));
+  cudaMallocManaged(&weights1, NUM_INPUTS*sizeof(float));
   cudaMallocManaged(&bias1, sizeof(float));
-  cudaMallocManaged(&weights2, 4*sizeof(float));
+  cudaMallocManaged(&weights2, NUM_INPUTS*sizeof(float));
   cudaMallocManaged(&bias2, sizeof(float));
-  cudaMallocManaged(&weights3, 4*sizeof(float));
+  cudaMallocManaged(&weights3, NUM_INPUTS*sizeof(float));
   cudaMallocManaged(&bias3, sizeof(float));
-  cudaMallocManaged(&output, 3*sizeof(float));
+  cudaMallocManaged(&output, NUM_OUTPUTS*sizeof(float));
 
   inputs[0] = 1.0f;
   inputs[1] = 2.0f;
