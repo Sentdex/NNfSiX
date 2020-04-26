@@ -22,10 +22,12 @@ int main() {
   weights1[1] = 0.8f;
   weights1[2] = -0.5f;
   weights1[3] = 1.0f;
+
   weights2[0] = 0.5f;
   weights2[1] = -0.91f;
   weights2[2] = 0.26f;
   weights2[3] = -0.5f;
+
   weights3[0] = -0.26f;
   weights3[1] = -0.27f;
   weights3[2] = 0.17f;
@@ -35,9 +37,9 @@ int main() {
   bias2[0] = 3.0f;
   bias3[0] = 0.5f;
 
-  output[0] = inputs[0]*weights1[0] + inputs[1]*weights1[1] + inputs[2]*weights1[2] + bias1[0];
-  output[1] = inputs[0]*weights2[0] + inputs[1]*weights2[1] + inputs[2]*weights2[2] + bias2[0];
-  output[2] = inputs[0]*weights3[0] + inputs[1]*weights3[1] + inputs[2]*weights3[2] + bias3[0];
+  output[0] = inputs[0]*weights1[0] + inputs[1]*weights1[1] + inputs[2]*weights1[2] + inputs[3]*weights1[3] + bias1[0];
+  output[1] = inputs[0]*weights2[0] + inputs[1]*weights2[1] + inputs[2]*weights2[2] + inputs[3]*weights2[3] + bias2[0];
+  output[2] = inputs[0]*weights3[0] + inputs[1]*weights3[1] + inputs[2]*weights3[2] + inputs[3]*weights3[3] + bias3[0];
 
   std::cout << "[" << output[0] << ", " << output[1] << ", " << output[2] << "]" << std::endl;
 
