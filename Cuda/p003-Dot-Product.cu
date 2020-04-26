@@ -5,13 +5,13 @@
 #define NUM_OUTPUTS 3
 
 __global__
-void dot(int m, int n, float *M, float *v, float *u){
+void dot(int outputs, int inputs, float *M, float *v, float *u){
   int index = threadIdx.x;
   int stride = blockDim.x;
-  for (int j = index; j < m; j += stride){
+  for (int j = index; j < outputs; j += stride){
     u[j] = 0.0f;
-    for(int i = 0; i < n; i++){
-      u[j] += M[i + n*j]*v[i];
+    for(int i = 0; i < inputs; i++){
+      u[j] += M[i + inputs*j]*v[i];
     }
   }
 }
@@ -36,16 +36,18 @@ int main() {
   inputs[0] = 1.0f;
   inputs[1] = 2.0f;
   inputs[2] = 3.0f;
-  inputs[2] = 2.5f;
+  inputs[3] = 2.5f;
 
   weights[0 + NUM_INPUTS*0] = 0.2f; //indexing as [x, y] = [x + NUM_INPUTS*y]
   weights[1 + NUM_INPUTS*0] = 0.8f;
   weights[2 + NUM_INPUTS*0] = -0.5f;
   weights[3 + NUM_INPUTS*0] = 1.0f;
+
   weights[0 + NUM_INPUTS*1] = 0.5f;
   weights[1 + NUM_INPUTS*1] = -0.91f;
   weights[2 + NUM_INPUTS*1] = 0.26f;
   weights[3 + NUM_INPUTS*1] = -0.5f;
+
   weights[0 + NUM_INPUTS*2] = -0.26f;
   weights[1 + NUM_INPUTS*2] = -0.27f;
   weights[2 + NUM_INPUTS*2] = 0.17f;
@@ -55,8 +57,7 @@ int main() {
   bias[1] = 3.0f;
   bias[2] = 0.5f;
 
-  dot<<<1, NUM_INPUTS>>>(NUM_OUTPUTS, NUM_INPUTS, weights, inputs, output);
-  cudaDeviceSynchronize();
+  dot<<<1, NUM_OUTPUTS>>>(NUM_OUTPUTS, NUM_INPUTS, weights, inputs, output);
   add<<<1, NUM_OUTPUTS>>>(NUM_OUTPUTS, output, bias);
   cudaDeviceSynchronize();
 
