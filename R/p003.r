@@ -1,7 +1,4 @@
-if(! "pracma" %in% installed.packages()){
-  install.packages("pracma", dependencies = TRUE)
-}
-require("pracma")
+library("pracma")
 
 inputs <- c(1, 2, 3, 2.5)
 
