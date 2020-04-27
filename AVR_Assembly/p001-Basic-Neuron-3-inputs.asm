@@ -17,7 +17,7 @@
 ; CONNECTIONS: For this example no pins have to be connected.
 ; -------------------------------------------------------------------------------------------------
 
-.DEVICE attiny85                  ; device to check memory
+.DEVICE attiny44                 ; device to check memory
 .INCLUDE "attiny44.asm"           ; register map made by me
 ; warning: the register map is not finished yet!
 
