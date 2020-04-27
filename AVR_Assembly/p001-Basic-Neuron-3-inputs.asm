@@ -3,13 +3,13 @@
 ; PROCESSOR:   Attiny85
 ;
 ; DESCRIPTION: I know this is insane, but also a great learning experience :D
-;              I'm not sure yet about some points, for example:
-;              - negative numbers
 ;              
 ;              I use integer math
 ;              This will however reduce the maximum value to 255
 ;              With the introduction of negative numbers I am further limited to +/- 127
 ;              Let's see how this goes...
+;
+;              Negative numbers are handled as twos complement (standard for most binay systems)
 ;
 ;              For the first example, we can keep everything in registers for ultra fast access
 ;              Later on we have to fall back to the internal SRAM
