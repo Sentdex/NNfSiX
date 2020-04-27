@@ -8,5 +8,7 @@ weights <- list( c(0.2, 0.8, -0.5, 1.0),
 
 biases <- c(2,3,0.5)
 
-output <- dot(do.call(cbind, weights), inputs) + biases
+weights_matrix <- do.call(cbind, weights)
+
+output <- dot(weights_matrix, inputs) + biases
 print(output)
