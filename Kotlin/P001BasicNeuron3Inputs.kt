@@ -1,3 +1,8 @@
+/**
+ * Creates a basic neuron with 3 inputs.
+ * Associated YT NNFS tutorial: https://www.youtube.com/watch?v=Wo5dMEP_BbI
+*/
+
 val inputs = listOf(1.2, 5.1, 2.1)
 val weights = listOf(3.1, 2.1, 8.7)
 val bias = 3
