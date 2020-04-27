@@ -19,6 +19,16 @@
             "command": "avra ./src/template.asm"
         },
         {
+            "label": "asm_p001",
+            "type": "shell",
+            "command": "avra ./src/p001-Basic-Neuron-3-inputs.asm"
+        },
+        {
+            "label": "flash_p001",
+            "type": "shell",
+            "command": "avrdude -c Usbasp -p t44 -U flash:w:./src/p001-Basic-Neuron-3-inputs.hex"
+        },
+        {
             "label": "burn_bootloader_int8MHz",
             "type": "shell",
             "command": "avrdude -c Usbasp -p t85 -U lfuse:w:0xe2:m hfuse:w:0xdf:m efuse:w:0xff:m"
