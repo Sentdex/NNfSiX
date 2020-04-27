@@ -17,8 +17,8 @@
 ; CONNECTIONS: For this example no pins have to be connected.
 ; -------------------------------------------------------------------------------------------------
 
-.DEVICE attiny44                 ; device to check memory
-.INCLUDE "attiny44.asm"           ; register map made by me
+.DEVICE attiny44                     ; device to check memory
+.INCLUDE "AVR_Assembly/attiny44.asm" ; register map made by me
 ; warning: the register map is not finished yet!
 
 ; Interrupt vector routines | Nr | Source     | Description
@@ -66,8 +66,11 @@ Init:
     ; bias
     ldi r24, 3 ;0
 
-    ldi r25, 0x00 ; reset output
+    ldi r25, 0x00 ; reset sum
 
+
+
+    ; first input
     mov r16, r18 ; the first input
     mov r17, r21 ; the first weight
 
@@ -77,34 +80,55 @@ Init:
     ldi r31, high(Multiply) ; the high address byte of the target address
     icall ; call the multiplication function
 
-    add r25, r16 ; add the result to the output
-    brvs Outputoverflow ; in case of an overflow, go directly to the maximum value
+    mov r17, r25 ; the sum is the second number for the addition
 
-    mov r16, r19 ; second input
-    mov r17, r22 ; second weight
-    icall ; the adddress of the multiplication is still loaded
+    ldi r30, low(AddAndCap) ; the low address byte of the target address
+    ldi r31, high(AddAndCap) ; the high address byte of the target address
+    icall ; call the addition function
 
-    add r25, r16 ; add the result to the output
-    brvs Outputoverflow ; in case of an overflow, go directly to the maximum value
+    mov r25, r16 ; store the result in the sum
 
-    mov r16, r20 ; third input
-    mov r17, r23 ; third weight
-    icall ; multiply
 
-    add r25, r16 ; add result to output
-    brvs Outputoverflow ; in case of an overflow, go directly to the maximum value
+    ; second input
+    mov r16, r19 ; the first input
+    mov r17, r22 ; the first weight
 
-    add r25, r24 ; add bias to the output
-    brvc Nooutputoverflow ; in case of an overflow, go directly to the maximum value
+    ldi r30, low(Multiply) ; the low address byte of the target address
+    ldi r31, high(Multiply) ; the high address byte of the target address
+    icall ; call the multiplication function
 
-    ; no underflow is handled yet
-    ; also not sure about negative numbers in general
+    mov r17, r25 ; the sum is the second number for the addition
 
-Outputoverflow:
-    ldi r25, 0b01111111 ; maximum value
+    ldi r30, low(AddAndCap) ; the low address byte of the target address
+    ldi r31, high(AddAndCap) ; the high address byte of the target address
+    icall ; call the addition function
 
-Nooutputoverflow:
-    mov r16, r25 ; r16 is the output
+    mov r25, r16 ; store the result in the sum
+
+
+    ; third input
+    mov r16, r20 ; the first input
+    mov r17, r23 ; the first weight
+
+    ldi r30, low(Multiply) ; the low address byte of the target address
+    ldi r31, high(Multiply) ; the high address byte of the target address
+    icall ; call the multiplication function
+
+    mov r17, r25 ; the sum is the second number for the addition
+
+    ldi r30, low(AddAndCap) ; the low address byte of the target address
+    ldi r31, high(AddAndCap) ; the high address byte of the target address
+    icall ; call the addition function
+
+
+    ; bias
+    mov r17, r24 ; the bias is the second number for the addition
+
+    ldi r30, low(AddAndCap) ; the low address byte of the target address
+    ldi r31, high(AddAndCap) ; the high address byte of the target address
+    icall ; call the addition function
+
+    ; the result is in r16 since thats the way the addition returns its result
 
 ;;
 ; @brief Main loop function
@@ -128,75 +152,110 @@ Main:
 ; @return r16 - the result of the multiplication
 ; 
 ; Multiplies the values from registers r16 and r17
-; Registers r18 and r19 are used for the result before it is capped
 ; The limit for the result is +/- 127
 ; In the first step, the signs of both values are investigated
 ; This way we know, if the result has to be negative or positive
-; Then the signs are cleared
-; Next, a loop is executed r16 times
-; For every iteration of the loop, r17 is added to the result
-; If the lower result byte overflows, the upper byte is incremented
-;
-; I commented some lines out. Will have to check later...
+; Then it's basically the same as multiplication by hand
+; The first number is shifted and added for every bit set in the other number
+; At the end the sign is put back if necessary
 Multiply:
-    push r18 ; need this register for result
-    push r19 ; need this register for result
-    push r20 ; need this also
-    push r21 ; also this
+    push r18 ; adder holder lower byte
+    push r19 ; adder holder upper byte
+    push r20 ; product holder lower byte
+    push r21 ; product holder upper byte
+    push r22 ; bitmask
+    push r23 ; used to keep a copy of the second value
+    push r24 ; stores sign during multiplication
 
-    ldi r20, 0x00 ; clear register
+    mov r24, r16 ; copy first number into r24
+    eor r24, r17 ; if either is negative, the sign bit will be set. if none or both are, its cleared (- * - = +)
 
-    ;ldi r18, 0x80 ; bitmask for the msb
-    ;and r18, r16 ; if first byte is negative
-    ;sbrc r18, 7 ; skip if bit is cleared (r16 is positive)
-    ;ori r20, 0x01 ; set this bit if r16 is negative
-    
-    ;ldi r18, 0x80 ; bitmask for the msb
-    ;and r18, r17 ; if the second byte is negative
-    ;sbrc r18, 7 ; skip if bit is cleared (r17 is positive)
-    ;com r20 ; this flips all bits in r20
-    ; if the bit was set (r16 is negative) it is now reset (result is positive if both are negative)
-    ; otherwise the bit is now set
+    sbrc r16, 7 ; if the first number is negative
+    neg r16 ; make it positive
 
-    ; if r20 bit 0 is still set, the result has to be negative
+    sbrc r17, 7 ; if the second number is negative
+    neg r17 ; make it positive
 
-    ; clear the sign of both bytes r16 and r17
-    cbr r16, 0x80 ; remove sign of r16
-    cbr r17, 0x80 ; remove sign of r17
+    mov r18, r16 ; copy first number into r18
+    clr r19 ; clear r19
+    clr r20 ; clear r20
+    clr r21 ; clear r21
+    ldi r22, 0x01 ; set bitmask to the first bit
 
-    ldi r18, 0x00 ; reset register 18
-    ldi r19, 0x00 ; reset register 19
+Multiply_Outerloop:
+    cpi r22, 0x80 ; when the bitmask reached the sign bit
+    breq Multiply_LoopExit ; multiplication is done
 
-Multiply_addr17:
-    cpi r16, 0x00 ; compare r16 with 0
-    breq Multiply_exit ; jump to end of multiply if r16 is zero
-    dec r16 ; subtract one from r16
-    add r18, r17 ; add r17 to the result
-    brvc Multiply_nocarry ; if no overflow, skip
-    inc r19 ; increment upper result byte by one
+    mov r23, r17 ; copy second number into r23
+    and r23, r22 ; compare second number with bitmask
+    breq Multiply_BitNotSet ; when the bit is not set, dont add anything
 
-Multiply_nocarry:
-    rjmp Multiply_addr17 ; next loop
+    add r20, r18 ; add the lower byte without carry
+    adc r21, r19 ; add the upper byte and the carry from the lower byte
 
-Multiply_exit:
-    ; the number has to be capped
-    ;andi r19, 0xFF
-    ;brne Multiply_numbertoobig ; if any bit in the upper byte is set, the number is too big
-    ;andi r18, 0x80
-    ;breq Multiply_numberisok ; if the lower bit is less then 8 bit
-    
-Multiply_numbertoobig:
-    ;ldi r18, 0b01111111 ; the largest possible number (capped)
+Multiply_BitNotSet:
+    lsl r18 ; shift r18 left, lowest bit is 0, highest bit goes to carry
+    rol r19 ; rotate r19 left, lowest bit is carry from r18
+    lsl r22 ; shift bitmask left
 
-Multiply_numberisok:
-    ; the sign has to be added again
-    ;sbrc r20, 0 ; if the sign has not to be set, skip
-    ;sbr r18, 7 ; set the sign if it has to be set
+    rjmp Multiply_Outerloop
 
-    mov r16, r18 ; move the result in r16
+Multiply_LoopExit:
+    andi r21, 0xFF ; any bit in the upper byte is too much
+    brne Multiply_SomeUpperBits
+    mov r23, r20
+    andi r23, 0x80 ; highest bit in lower byte is sign bit, it cannot be set
+    breq Multiply_NoUpperBits
 
-    pop r21 ; return the original value
-    pop r20 ; return the original value
-    pop r19 ; return the original value
-    pop r18 ; return the original value
-    ret ; jump back to where the function was called from
+Multiply_SomeUpperBits:
+    ldi r20, 0x7F ; highest possible number
+
+Multiply_NoUpperBits:
+    mov r16, r20
+
+    sbrc r24, 7 ; if the sign bit is set
+    neg r16 ; make the result negative
+
+    pop r24
+    pop r23
+    pop r22
+    pop r21
+    pop r20
+    pop r19
+    pop r18
+    ret
+
+;;
+; @brief Adds two values
+;
+; @param r16 - first input
+; @param r17 - second input
+; 
+; @return r16 - the result of the multiplication
+; 
+; Adds the values in r16 and r17
+; If the result would overflow 7 bits it is capped
+; If the result would underflow (7 bits with sign set) it is capped negative
+; This is overcomplicated but saver than making assumptions about the math unit
+;
+; the maximum output of an addition in binary is one bit more
+; since the inputs HAVE to be 7 bits (if they are 8 bit it's your fault and treated as negative)
+; we are allowed to add them
+; now if it would overflow (it's converted to positive, no underflow possible)
+; we can catch that by looking at most significant bit
+AddAndCap:
+    add r16, r17 ; add the numbers
+
+    brvc AddAndCap_NoOverflow
+
+    brpl AddAndCap_NegativeOverflow
+
+    ; positive overflow
+    ldi r16, 0x7F ; cap positive
+    rjmp AddAndCap_NoOverflow
+
+AddAndCap_NegativeOverflow:
+    ldi r16, 0x80 ; cap negative
+
+AddAndCap_NoOverflow:
+    ret
