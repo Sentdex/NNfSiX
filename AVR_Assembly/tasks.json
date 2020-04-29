@@ -4,29 +4,19 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "asm_test",
-            "type": "shell",
-            "command": "avra ./src/test.asm"
-        },
-        {
-            "label": "flash_test",
-            "type": "shell",
-            "command": "avrdude -c Usbasp -p t85 -U flash:w:./src/test.hex"
-        },
-        {
             "label": "asm_template",
             "type": "shell",
-            "command": "avra ./src/template.asm"
+            "command": "avra ./AVR_Assembly/template.asm"
         },
         {
             "label": "asm_p001",
             "type": "shell",
-            "command": "avra ./src/p001-Basic-Neuron-3-inputs.asm"
+            "command": "avra ./AVR_Assembly/p001-Basic-Neuron-3-inputs.asm"
         },
         {
             "label": "flash_p001",
             "type": "shell",
-            "command": "avrdude -c Usbasp -p t44 -U flash:w:./src/p001-Basic-Neuron-3-inputs.hex"
+            "command": "avrdude -c Usbasp -p t44 -U flash:w:./AVR_Assembly/p001-Basic-Neuron-3-inputs.hex"
         },
         {
             "label": "burn_bootloader_int8MHz",
