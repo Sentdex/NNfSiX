@@ -18,7 +18,8 @@
 ; -------------------------------------------------------------------------------------------------
 
 .DEVICE attiny85                  ; device to check memory
-.INCLUDE "attiny85.asm"           ; register map made by me
+.INCLUDE "attiny44.asm"           ; register map made by me
+; warning: the register map is not finished yet!
 
 ; Interrupt vector routines | Nr | Source     | Description
 Begin:
@@ -51,18 +52,19 @@ Init:
 
     ; im just gonna put stuff here since it has to run only once at the moment
     
+    ; i had to change the inputs because it would overflow otherwise
     ; inputs
-    ldi r18, 12
-    ldi r19, 51
-    ldi r20, 21
+    ldi r18, 1 ;2
+    ldi r19, 5 ;1
+    ldi r20, 2 ;1
 
     ; weights
-    ldi r21, 31
-    ldi r22, 21
-    ldi r23, 87
+    ldi r21, 3 ;1
+    ldi r22, 2 ;1
+    ldi r23, 8 ;7
 
     ; bias
-    ldi r24, 30
+    ldi r24, 3 ;0
 
     ldi r25, 0x00 ; reset output
 
@@ -71,8 +73,8 @@ Init:
 
     ; an icall is used since this is more universal
     ; a normal rcall can only reach a limited jumping distance
-    ldi r30, lo8(Multiply) ; the low address byte of the target address
-    ldi r31, hi8(Multiply) ; the high address byte of the target address
+    ldi r30, low(Multiply) ; the low address byte of the target address
+    ldi r31, high(Multiply) ; the high address byte of the target address
     icall ; call the multiplication function
 
     add r25, r16 ; add the result to the output
@@ -110,6 +112,11 @@ Nooutputoverflow:
 ; This function loops (wow)
 Main:
     ;wdr ; watchdog reset
+    ldi r17, 0xFF ; bitmask for all pins in the register
+    out DDRA, r17 ; define port as output
+
+    out PORTA, r16 ; put the result on the pins
+    ; now, using a logic analyser, I can probe the result
     rjmp Main
 
 ;;
@@ -129,6 +136,8 @@ Main:
 ; Next, a loop is executed r16 times
 ; For every iteration of the loop, r17 is added to the result
 ; If the lower result byte overflows, the upper byte is incremented
+;
+; I commented some lines out. Will have to check later...
 Multiply:
     push r18 ; need this register for result
     push r19 ; need this register for result
@@ -137,23 +146,23 @@ Multiply:
 
     ldi r20, 0x00 ; clear register
 
-    ldi r18, 0x80 ; bitmask for the msb
-    and r18, r16 ; if first byte is negative
-    sbrc r18, 7 ; skip if bit is cleared (r16 is positive)
-    ori r20, 0x01 ; set this bit if r16 is negative
+    ;ldi r18, 0x80 ; bitmask for the msb
+    ;and r18, r16 ; if first byte is negative
+    ;sbrc r18, 7 ; skip if bit is cleared (r16 is positive)
+    ;ori r20, 0x01 ; set this bit if r16 is negative
     
-    ldi r18, 0x80 ; bitmask for the msb
-    and r18, r17 ; if the second byte is negative
-    sbrc r18, 7 ; skip if bit is cleared (r17 is positive)
-    com r20 ; this flips all bits in r20
+    ;ldi r18, 0x80 ; bitmask for the msb
+    ;and r18, r17 ; if the second byte is negative
+    ;sbrc r18, 7 ; skip if bit is cleared (r17 is positive)
+    ;com r20 ; this flips all bits in r20
     ; if the bit was set (r16 is negative) it is now reset (result is positive if both are negative)
     ; otherwise the bit is now set
 
     ; if r20 bit 0 is still set, the result has to be negative
 
     ; clear the sign of both bytes r16 and r17
-    cbr r16, 7 ; remove sign of r16
-    cbr r17, 7 ; remove sign of r17
+    cbr r16, 0x80 ; remove sign of r16
+    cbr r17, 0x80 ; remove sign of r17
 
     ldi r18, 0x00 ; reset register 18
     ldi r19, 0x00 ; reset register 19
@@ -171,18 +180,18 @@ Multiply_nocarry:
 
 Multiply_exit:
     ; the number has to be capped
-    andi r19, 0xFF
-    brne Multiply_numbertoobig ; if any bit in the upper byte is set, the number is too big
-    andi r18, 0x80
-    breq Multiply_numberisok ; if the lower bit is less then 8 bit
+    ;andi r19, 0xFF
+    ;brne Multiply_numbertoobig ; if any bit in the upper byte is set, the number is too big
+    ;andi r18, 0x80
+    ;breq Multiply_numberisok ; if the lower bit is less then 8 bit
     
 Multiply_numbertoobig:
-    ldi r18, 0b01111111 ; the largest possible number (capped)
+    ;ldi r18, 0b01111111 ; the largest possible number (capped)
 
 Multiply_numberisok:
     ; the sign has to be added again
-    sbrc r20, 0 ; if the sign has not to be set, skip
-    sbr r18, 7 ; set the sign if it has to be set
+    ;sbrc r20, 0 ; if the sign has not to be set, skip
+    ;sbr r18, 7 ; set the sign if it has to be set
 
     mov r16, r18 ; move the result in r16
 

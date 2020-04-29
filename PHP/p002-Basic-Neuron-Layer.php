@@ -1,8 +1,15 @@
-<?
+<?php
 /**
 * Creates a simple layer of neurons, with 4 inputs.
 * Associated YT NNFS tutorial: https://www.youtube.com/watch?v=lGLto9Xd7bU
 **/
+
+function print_array($a){
+
+    // vector
+    if(!is_array($a[0]))
+        print("[ " . implode(' ', $a) . " ]\n");
+}
 
 $inputs = [1.0, 2.0, 3.0, 2.5];
 
@@ -17,4 +24,4 @@ $bias3 = 0.5;
 $output = [$inputs[0]*$weights1[0] + $inputs[1]*$weights1[1] + $inputs[2]*$weights1[2] + $inputs[3]*$weights1[3] + $bias1,
            $inputs[0]*$weights2[0] + $inputs[1]*$weights2[1] + $inputs[2]*$weights2[2] + $inputs[3]*$weights2[3] + $bias2,
            $inputs[0]*$weights3[0] + $inputs[1]*$weights3[1] + $inputs[2]*$weights3[2] + $inputs[3]*$weights3[3] + $bias3];
-var_dump($output);
+print_array($output);
