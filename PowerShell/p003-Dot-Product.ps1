@@ -3,16 +3,13 @@ Doing dot product with a layer of neurons and multiple inputs
 #>
 
 $inputs = (1, 2, 3, 2.5)
-
 $weights = ((0.2, 0.8, -0.5, 1.0),(0.5, -0.91, 0.26, -0.5),(-0.26, -0.27, 0.17, 0.87))
-
 $biases =  (2, 3, 0.5)
 
 
-
 <#
-could not find standard libraries for dot product and array addition.
-Therefore the below the requred helper functions.
+Could not find standard libraries for calculating dot product and array addition.
+Therefore below are the two required helper functions.
 #>
 
 function dotProduct 
@@ -37,7 +34,6 @@ function dotProduct
     return $output
 }
 
-
 function sumArray
 {
   [CmdletBinding()]
@@ -57,10 +53,7 @@ function sumArray
   }
 } 
 
-
-
-# Calling two helper functions
+# Calling the two helper functions
 $layerOutputs = sumArray (dotProduct $inputs $weights) $biases 
-
 
 Write-Host $layerOutputs
