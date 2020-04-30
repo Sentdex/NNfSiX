@@ -1,31 +1,22 @@
-func dot(m:[[Double]], v:[Double]) -> [Double] {
-  // here one should check for A[0].count == v.count
-  // but this will be left out for simplicity and readability
-  var u:[Double] = Array(repeating: 0.0, count: m.count)
-
-  for i in 0...(m[0].count-1) {
-    for j in 0...(m.count-1) {
-
-      u[j] += m[j][i]*v[i]
-
-    }
-  }
-
-  return u
+func dot (_ lvals: [[Double]], _ rval: [Double]) -> [Double] {
+    // here one should check for lvals[0].count == rval.count
+    // but this will be left out for simplicity and readability
+    return lvals.map { (lval) -> Double in dot(lval,rval) }
 }
 
-func add(v1:[Double], v2:[Double]) -> [Double]{
-  // here one should check for v1.count == v2.count
-  // but this will be left out for simplicity and readability
-  var u:[Double] = Array(repeating: 0.0, count: v1.count)
+func dot (_ lval: [Double], _ rval: [Double]) -> Double {
+    // here one should check for lval.count == rval.count
+    // but this will be left out for simplicity and readability
+    return zip(lval, rval)
+        .reduce(0.0, { (sum, tuple) -> Double in sum + tuple.0 * tuple.1 })
+}
 
-  for i in 0...(v1.count-1) {
-
-    u[i] = v1[i] + v2[i]
-
-  }
-
-  return u
+extension Array where Element == Double {
+      // here one should check for self.count == rval.count
+    // but this will be left out for simplicity and readability
+    func add(_ rval: [Double]) -> [Double] {
+        return zip(self, rval).map(+)
+    }
 }
 
 // The above replaces the `import numpy as np` =========
@@ -37,6 +28,6 @@ var weights:[[Double]] = [[0.2, 0.8, -0.5, 1.0],
 
 var biases:[Double] = [2.0, 3.0, 0.5]
 
-var output:[Double] = dot(m: weights, v: inputs)
-output = add(v1: output, v2: biases)
+var output:[Double] = dot(weights, inputs)
+output = output.add(biases)
 print(output)
