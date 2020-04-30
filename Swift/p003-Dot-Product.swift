@@ -1,5 +1,5 @@
 func dot (_ lvals: [[Double]], _ rval: [Double]) -> [Double] {
-    // here one should check for lvals[0].count == rval.count
+    // here one should check for lvals[n].count == rval.count
     // but this will be left out for simplicity and readability
     return lvals.map { (lval) -> Double in dot(lval,rval) }
 }
@@ -12,7 +12,7 @@ func dot (_ lval: [Double], _ rval: [Double]) -> Double {
 }
 
 extension Array where Element == Double {
-      // here one should check for self.count == rval.count
+    // here one should check for self.count == rval.count
     // but this will be left out for simplicity and readability
     func add(_ rval: [Double]) -> [Double] {
         return zip(self, rval).map(+)
