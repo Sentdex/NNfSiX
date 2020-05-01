@@ -28,6 +28,5 @@ var weights:[[Double]] = [[0.2, 0.8, -0.5, 1.0],
 
 var biases:[Double] = [2.0, 3.0, 0.5]
 
-var output:[Double] = dot(weights, inputs)
-output = output.add(biases)
+var output:[Double] = dot(weights, inputs).add(biases)
 print(output)
