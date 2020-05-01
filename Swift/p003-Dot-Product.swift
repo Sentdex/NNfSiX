@@ -14,9 +14,9 @@ extension Array where Element == Double {
             .reduce(0.0, { (sum, tuple) -> Double in sum + tuple.0 * tuple.1 })
     }
 
-    // here one should check for self.count == rval.count
-    // but this will be left out for simplicity and readability
     func add(_ rval: [Double]) -> [Double] {
+        // here one should check for self.count == rval.count
+        // but this will be left out for simplicity and readability
         return zip(self, rval).map(+)
     }
 }
