@@ -12,8 +12,8 @@
 
 #define NET_BATCH_SIZE 3
 #define NET_INPUT_LAYER_1_SIZE 4 // can be replaced with (sizeof(var)/sizeof(double))
-#define NET_HIDDEN_LAYER_2_SIZE 3 // can be replaced with (sizeof(var)/sizeof(double))
-#define NET_OUTPUT_LAYER_SIZE 3 // can be replaced with (sizeof(var)/sizeof(double))
+#define NET_HIDDEN_LAYER_2_SIZE 5 // can be replaced with (sizeof(var)/sizeof(double))
+#define NET_OUTPUT_LAYER_SIZE 2 // can be replaced with (sizeof(var)/sizeof(double))
 
 
 typedef struct{
@@ -110,7 +110,7 @@ void layer_init(layer_dense_t *layer,int intput_size,int output_size, int batch_
            layer->baise[i] = INIT_BAISES;
     }
     for(i = 0; i < (intput_size*output_size); i++){
-           layer->weights[i] = rand_range(-5,5);
+           layer->weights[i] = rand_range(RAND_MIN_RANGE,RAND_HIGH_RANGE);
     }
 }
 
