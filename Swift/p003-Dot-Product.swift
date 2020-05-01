@@ -24,7 +24,7 @@ extension Array where Element == [Double] {
         return self.map { (lval) -> Double in lval.dot(rval)! }
     }
 }
-// The above replaces numpy =========
+// The above replaces numpy in the pythonic example =========
 
 let inputs:[Double] = [1.0, 2.0, 3.0, 2.5]
 let weights:[[Double]] = [[0.2, 0.8, -0.5, 1.0],
