@@ -21,15 +21,7 @@ extension Array where Element == [Double] {
         let rc = rval.count
         if self.reduce(false, { $1.count != rc }) { return nil }
 
-        var resultArray: [Double] = []
-        for lval in self{
-            guard let dotProduct = lval.dot(rval) else {
-                return nil
-            }
-            resultArray.append(dotProduct)
-        }
-        
-        return resultArray
+        return self.map { (lval) -> Double in lval.dot(rval)! }
     }
 }
 // The above replaces numpy =========
