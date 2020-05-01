@@ -4,9 +4,11 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
-#define RAND_HIGH_RANGE (5.0)
-#define RAND_MIN_RANGE (-5.0)
+#define RAND_HIGH_RANGE (0.10)
+#define RAND_MIN_RANGE (-0.10)
+#define INIT_BAISES (0.0)
 
 #define NET_BATCH_SIZE 3
 #define NET_INPUT_LAYER_1_SIZE 4 // can be replaced with (sizeof(var)/sizeof(double))
@@ -105,7 +107,7 @@ void layer_init(layer_dense_t *layer,int intput_size,int output_size, int batch_
 
     int i = 0;
     for(i = 0; i < (output_size); i++){
-           layer->baise[i] = rand_range(RAND_MIN_RANGE,RAND_HIGH_RANGE);
+           layer->baise[i] = INIT_BAISES;
     }
     for(i = 0; i < (intput_size*output_size); i++){
            layer->weights[i] = rand_range(-5,5);
@@ -142,7 +144,7 @@ int main()
 {
 
     //seed the random values
-    srand(time(NULL));
+    srand(0);
 
     int i = 0;
     int j = 0;
@@ -156,7 +158,7 @@ int main()
         {-1.5,2.7,3.3,-0.8}
     };
 
-    X.output = X_input;
+    X.output = &X_input[0][0];
 
 
     layer_init(&layer1,NET_INPUT_LAYER_1_SIZE,NET_HIDDEN_LAYER_2_SIZE,NET_BATCH_SIZE);
