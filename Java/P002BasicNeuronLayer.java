@@ -1,3 +1,4 @@
+package NNfSiX.Java;
 /*
 Create a basic neuron layer in Java
 
