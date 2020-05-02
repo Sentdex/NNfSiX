@@ -1,7 +1,7 @@
 //: [Previous](@previous)
 
 /*
-Associated YT tutorial: https://youtu.be/TEWy9vZcxW4
+[Associated YT tutorial](https://youtu.be/TEWy9vZcxW4)
 */
 
 import Surge
