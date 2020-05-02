@@ -8,3 +8,10 @@ If you're following along in another language, feel free to contribute to your s
 # How to contribute: 
 
 The plan is to share code from video part #s. I will be updating the Python variants, so, if you are just following the [book](https://nnfs.io), you can see which block(s) of code should be translated by checking out the Python versions.
+
+Before submitting a PR, check to see if there's already a PR from someone for that specific part # and language. 
+
+I will be accepting PRs in the following ways:
+
+1. Prioritizing the already-established people who have contributed to that language already.
+2. Prioritizing by who submits first. 
