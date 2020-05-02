@@ -14,14 +14,14 @@ X = [ 1    2    3    2.5;
 # Julia doesn't have classes, so instead we make a struct.
 mutable struct Layer_Dense
     weights::Array{Float64, 2}
-    biases::Vector{Float64}
+    biases::Array{Float64, 2}
     output::Array{Float64, 2}
 end
 
 # Make a constructor for this struct.
 function Layer_Dense(n_inputs, n_neurons)
     weights = 0.10 * randn(n_inputs, n_neurons)
-    biases = zeros(n_neurons)
+    biases = zeros(1, n_neurons)
 
     # Initialize with an undefined output.
     output = Array{Float64, 2}(undef, n_inputs, n_neurons)
@@ -31,7 +31,7 @@ end
 
 # And define the forward function for this struct.
 function forward(layer::Layer_Dense, inputs)
-    layer.output = inputs * layer.weights .+ layer.biases'
+    layer.output = inputs * layer.weights .+ layer.biases
 end
 
 # Now do the example.
