@@ -4,7 +4,7 @@ Matrix.__index = Matrix
 -- Constructors {
 function Matrix.new(rows: number, cols: number, value: number?)
 	local fillValue = value or 0
-	local mat = table.create(rows, cols, fillValue)
+	local mat = table.create(rows, table.create(cols, fillValue))
 	setmetatable(mat, Matrix)
 	return mat
 end
