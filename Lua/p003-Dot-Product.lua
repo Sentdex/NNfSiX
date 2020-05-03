@@ -58,7 +58,7 @@ function Matrix.dot(matA, matB)
 	return res
 end
 
-function Matrix.add(matA, matB)
+function Matrix.__add(matA, matB)
 	local rowsA, colsA = #matA, #matA[1]
 	if rowsA ~= #matB or colsA ~= #matB[1] then
 		error("Invalid matrix size")
@@ -74,7 +74,7 @@ function Matrix.add(matA, matB)
 	return res
 end
 
-function Matrix.sub(matA, matB)
+function Matrix.__sub(matA, matB)
 	local rowsA, colsA = #matA, #matA[1]
 	if rowsA ~= #matB or colsA ~= #matB[1] then
 		error("Invalid matrix size")
@@ -90,7 +90,7 @@ function Matrix.sub(matA, matB)
 	return res
 end
 
-function Matrix.mult(matA, matB)
+function Matrix.__mul(matA, matB)
 	local rowsA, colsA = #matA, #matA[1]
 	if rowsA ~= #matB or colsA ~= #matB[1] then
 		error("Invalid matrix size")
@@ -106,7 +106,7 @@ function Matrix.mult(matA, matB)
 	return res
 end
 
-function Matrix.div(matA, matB)
+function Matrix.__div(matA, matB)
 	local rowsA, colsA = #matA, #matA[1]
 	if rowsA ~= #matB or colsA ~= #matB[1] then
 		error("Invalid matrix size")
@@ -123,8 +123,7 @@ function Matrix.div(matA, matB)
 end
 
 -- Helpful functions
-
-function Matrix.print(mat)
+function Matrix.__tostring(mat)
 	local rows, cols = #mat, #mat[1]
 	local str = "{"
 	for i = 1, rows do
@@ -141,11 +140,11 @@ function Matrix.print(mat)
 		end
 	end
 	str = str.."}"
-	print(str)
+	return str
 end
 
 -- Code from video in Lua
-local mat = Matrix
+local mat = require(script.Matrix)
 
 local inputs = mat.from1DArray({1, 2, 3, 2.5})
 local weights = mat.from2DArray({
@@ -155,5 +154,5 @@ local weights = mat.from2DArray({
 })
 local biases = mat.from1DArray({2, 3, 0.5})
 
-local output = mat.dot(weights, inputs):add(biases)
-output:print()
+local output = mat.dot(weights, inputs) + biases
+print(tostring(output))
