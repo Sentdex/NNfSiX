@@ -22,7 +22,7 @@ defmodule P003DotProduct do
     |> reduce(0, fn i, acc -> acc + at(inputs, i) * at(weight, i) end)
   defp dot(inputs, weights, biases), do:
     0..length(weights) - 1
-    |> reduce([], fn i, acc -> [acc] ++ [dot(inputs, at(weights, i)) + at(biases, i)] end)
+    |> reduce([], fn i, acc -> acc ++ [dot(inputs, at(weights, i)) + at(biases, i)] end)
     |> List.flatten
 
 end
