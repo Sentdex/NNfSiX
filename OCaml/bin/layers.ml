@@ -16,7 +16,7 @@ let make_layer n_inputs n_neurons =
   {weights = rand_weight n_inputs n_neurons; biases = zeros n_neurons}
 
 let forward {weights; biases} inputs =
-  Array.map2 (fun w b -> dot_product inputs w b) weights biases
+  Array.map2 (dot_product inputs) weights biases
 
 let x = [[|1.; 2.; 3.; 2.5|];
          [|2.0; 5.0; -1.0; 2.0|];
