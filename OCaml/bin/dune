@@ -1,0 +1,24 @@
+(executable
+ (public_name p001)
+ (name main)
+ (libraries ppx_deriving)
+ (preprocess (pps ppx_deriving.show ))
+ (modules main))
+(executable
+ (public_name p002)
+ (name p002)
+ (modules p002)
+ (preprocess (pps ppx_deriving.show ))
+ (libraries ppx_deriving))
+(executable
+ (public_name p003)
+ (name dot_product)
+ (modules dot_product)
+ (preprocess (pps ppx_deriving.show ))
+ (libraries ppx_deriving))
+(executable
+ (public_name p004)
+ (name layers)
+ (modules layers)
+ (preprocess (pps ppx_deriving.show ))
+ (libraries ppx_deriving))
