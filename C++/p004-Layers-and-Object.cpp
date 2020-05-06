@@ -1,6 +1,6 @@
 /**
- * Creates a dense layer 
- * 
+ * Creates a dense layer
+ *
  * Associated tutorial https://www.youtube.com/watch?v=TEWy9vZcxW4
  */
 #include <algorithm>
@@ -29,6 +29,10 @@ template <class T, std::size_t s> struct List {
 	typedef T value_type;
 };
 
+#define IS_LIST(L)                                                             \
+	std::enable_if_t<std::is_same_v<typename L::value_type, double>,       \
+			 bool> = true
+
 template <std::size_t w, std::size_t h> struct Matrix {
 	static constexpr SizeType<w> width;
 	static constexpr SizeType<h> height;
@@ -41,20 +45,22 @@ template <std::size_t w, std::size_t h> struct Matrix {
 	typedef typename decltype(matrix)::value_type value_type;
 };
 
-template <class L>
-auto pretty_print(const L &list) -> decltype(std::declval<L>().list, void()) {
+#define IS_MATRIX(M)                                                           \
+	std::enable_if_t<!std::is_same_v<typename M::value_type, double>,      \
+			 bool> = true
+
+template <class M, IS_MATRIX(M)> auto pretty_print(const M &matrix) {
+	std::for_each(std::begin(matrix), std::end(matrix),
+		      [](const auto &list) { pretty_print(list); });
+}
+
+template <class L, IS_LIST(L)> auto pretty_print(const L &list) {
 	std::cout << "[ ";
 	std::copy(std::begin(list), std::end(list),
 		  std::ostream_iterator<double>(std::cout, " "));
 	std::cout << "]\n";
 }
 
-template <class M>
-auto pretty_print(const M &matrix)
-    -> decltype(std::declval<M>().matrix, void()) {
-	std::for_each(std::begin(matrix), std::end(matrix),
-		      [](const auto &list) { pretty_print(list); });
-}
 // python zip built-in
 template <class M, class N> auto zip(const M &m, const N &n) {
 	constexpr auto m_s = decltype(m.size)::get();
@@ -71,8 +77,7 @@ template <class M, class N> auto zip(const M &m, const N &n) {
 }
 
 // numpy randn
-template <class L>
-auto randn(L &list, double factor) -> decltype(std::declval<L>().list, void()) {
+template <class L, IS_LIST(L)> auto randn(L &list, double factor) {
 	std::mt19937 generator(/* Arbitrary Seed */ 0);
 	std::generate(std::begin(list), std::end(list), [&]() {
 		return static_cast<double>(generator()) /
@@ -81,21 +86,17 @@ auto randn(L &list, double factor) -> decltype(std::declval<L>().list, void()) {
 }
 
 // numpy randn
-template <class M>
-auto randn(M &matrix, double factor)
-    -> decltype(std::declval<M>().matrix, void()) {
+template <class M, IS_MATRIX(M)> auto randn(M &matrix, double factor) {
 	std::for_each(std::begin(matrix), std::end(matrix),
 		      [&](auto &list) { randn(list, factor); });
 }
 
 // numpy zeros
-template <class L>
-auto zeros(L &list) -> decltype(std::declval<L>().list, void()) {
+template <class L, IS_LIST(L)> auto zeros(L &list) {
 	std::fill(std::begin(list), std::end(list), 0);
 }
 
-template <class M>
-auto zeros(M &matrix) -> decltype(std::declval<M>().matrix, void()) {
+template <class M, IS_MATRIX(M)> auto zeros(M &matrix) {
 	std::for_each(std::begin(matrix), std::end(matrix), [](auto &list) {
 		std::fill(std::begin(list), std::end(list), 0);
 	});
@@ -159,9 +160,7 @@ class DenseLayer {
 		pretty_print(biases);
 	}
 
-	template <class M>
-	auto forward(const M &inputs)
-	    -> decltype(std::declval<M>().matrix, void()) {
+	template <class M, IS_MATRIX(M)> auto forward(const M &inputs) {
 		outputs = dot(inputs, weights, biases);
 	}
 	Matrix<n_neurons, inputs_height> outputs;
