@@ -6,19 +6,26 @@ package NNfSiX.Java;
  */
 public class P004Layers {
     public static void main(String[] args) {
-        // 1. Create a NeuralNetwork with input.
-        NeuralNetwork network = new NeuralNetwork(
-                new double[][] { { 1, 2, 3, 2.5 }, { 2, 5, -1, 2 }, { -1.5, 2.7, 3.3, -0.8 } });
-
-        // 2. Add the first hidden layer to the network with 4 inputs and 5 neurons.
-        network.addLayer(new NeuralLayer(4, 5));
-
-        // 3. Add the second hidden layer to the network with 5 inputs from previous
-        // layer and 2 outputs.
-        network.addLayer(new NeuralLayer(5, 2));
-
-        // 4. Do a forward pass of network and print the output.
-        System.out.println("Output: ");
-        Utils.print2dArr(network.forward());
+        double[][] inputs = new double[][] { { 1, 2, 3, 2.5 }, { 2, 5, -1, 2 }, { -1.5, 2.7, 3.3, -0.8 } };
+        Layer_Dense layer1 = new Layer_Dense(4, 5);
+        layer1.inputs = inputs;
+        Layer_Dense layer2 = new Layer_Dense(5, 2);
+        layer2.inputs = layer1.forward();
+        double[][] output = layer2.forward();
+        Utils.print2dArr(output);
+    }
+}
+class Layer_Dense {
+    double[][] weights;
+    double[][] inputs;
+    double[] bais;
+    
+    Layer_Dense(int num_of_inputs, int num_of_neurons) {
+        this.weigths = Utils.random(num_of_inputs, num_of_neurons, 0.35);
+        this.bais = Utils.random(1, num_of_neurons, 1)[0];
+    }
+    
+    double[][] forward() {
+        return Utils.add(Utils.dotProduct(inputs, weigths), bais);
     }
 }
