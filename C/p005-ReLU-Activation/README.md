@@ -1,9 +1,12 @@
 
+spiral_data.txt was generated using the following python code
 
+`sscanf()` has a rounding error when reading the file.
 
+```python
 import numpy as np 
 import nnfs
-from nnfs.datasets import spiral_data  # See for code: https://gist.github.com/Sentdex/454cb20ec5acf0e76ee8ab8448e6266c
+from nnfs.datasets import spiral_data
 
 nnfs.init()
 
@@ -16,3 +19,4 @@ for z in X:
 	f.write(str(z) + '\n')
 
 f.close();
+```
