@@ -19,9 +19,9 @@ func NewSpiralData(numberOfPoints, numberOfClasses int) (*mat.Dense, *mat.Dense)
 			t[i] += 0.2 * rand.NormFloat64()
 		}
 		for i := 0; i < numberOfPoints; i++ {
-			X.Set(c*i, 0, radius[i]*math.Sin(t[i]*2.5))
-			X.Set(c*i, 1, radius[i]*math.Cos(t[i]*2.5))
-			y.Set(c*i, 0, float64(c))
+			X.Set(c*numberOfPoints+i, 0, radius[i]*math.Sin(t[i]*2.5))
+			X.Set(c*numberOfPoints+i, 1, radius[i]*math.Cos(t[i]*2.5))
+			y.Set(c*numberOfPoints+i, 0, float64(c))
 		}
 	}
 

@@ -6,6 +6,10 @@ import (
 	"p005/nnfs"
 
 	"gonum.org/v1/gonum/mat"
+	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/plotutil"
+	"gonum.org/v1/plot/vg"
 )
 
 // LayerDense represents a layer
@@ -69,6 +73,8 @@ func main() {
 	rand.Seed(0)
 	X, _ := nnfs.NewSpiralData(100, 3)
 
+	// plotSpiral(X, y)
+
 	layer1 := NewLayerDense(2, 5)
 	activation1 := NewActivationRelu()
 
@@ -76,4 +82,40 @@ func main() {
 	// fmt.Println(layer1.Output)
 	activation1.Forward(layer1.Output)
 	fmt.Println(activation1.Output)
+}
+
+func plotSpiral(X *mat.Dense, y *mat.Dense) {
+	p, _ := plot.New()
+
+	p.Title.Text = "Spiral"
+	p.X.Label.Text = "X"
+	p.Y.Label.Text = "Y"
+
+	c1 := make(plotter.XYs, 0)
+	c2 := make(plotter.XYs, 0)
+	c3 := make(plotter.XYs, 0)
+	for i := 0; i < X.RawMatrix().Rows; i++ {
+		if y.At(i, 0) == 0 {
+			c1 = append(c1, plotter.XY{
+				X: X.At(i, 0),
+				Y: X.At(i, 1),
+			})
+		} else if y.At(i, 0) == 1 {
+			c2 = append(c2, plotter.XY{
+				X: X.At(i, 0),
+				Y: X.At(i, 1),
+			})
+		} else if y.At(i, 0) == 2 {
+			c3 = append(c3, plotter.XY{
+				X: X.At(i, 0),
+				Y: X.At(i, 1),
+			})
+		}
+	}
+
+	_ = plotutil.AddLinePoints(p, "0", c1, "1", c2, "2", c3)
+
+	if err := p.Save(4*vg.Inch, 4*vg.Inch, "points.png"); err != nil {
+		panic(err)
+	}
 }
