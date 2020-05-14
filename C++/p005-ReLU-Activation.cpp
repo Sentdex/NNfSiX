@@ -1,20 +1,17 @@
 /**
- * ReLU Activation function class
+ * ReLU Activation function class along with Layer_Dense Class
  * 
  * Associated tutorial https://www.youtube.com/watch?v=gmjzbpSVY1A&t=1349s
  */
+
 #include <iostream>
 #include <random>
 #include <vector>
-using namespace std;
 
-random_device rd;  
-mt19937 gen(rd()); 
-/* A helper function to get a random float in range [low, high] */
-double getRandomDouble(double low, double high) {
-    uniform_real_distribution<> dis(low, high);
-    return dis(gen);
-}
+// Custom datasets header file
+#include "datasets.h"
+
+using namespace std;
 
 /* a helper function to print a vector */
 void printOutput(vector<vector<double>> output) {
@@ -63,10 +60,12 @@ public:
 	/* Constructor */
 	Layer_Dense(int n_inputs, int n_neurons) {
 		weights = vector<vector<double>>(n_inputs, vector<double>(n_neurons));
+		random_device rd;  
+		mt19937 gen(rd()); 
+		uniform_real_distribution<> dis(-1, 1);
 		for(int i = 0; i < n_inputs; i++) {
 			for(int j = 0; j < n_neurons; j++) {
-				/* random weights initialization */
-				weights[i][j] = 0.1 * getRandomDouble(-1, 1);
+				weights[i][j] = 0.1 * dis(gen);
 			}
 		}
 
@@ -87,9 +86,11 @@ class Activation_ReLU {
 public:
 	vector<vector<double>> output;
 	void forward(vector<vector<double>> inputs) {
+		// Initializing the output as zeros
 		output = vector<vector<double>>(inputs.size(), vector<double>(inputs[0].size(), 0));
 		for(int i = 0; i < inputs.size(); i++) {
 			for(int j = 0; j < inputs[0].size(); j++) {
+				// Get the value only if it is positive otherwise zero
 				if(inputs[i][j] > 0) {
 					output[i][j] = inputs[i][j];
 				}
@@ -98,17 +99,15 @@ public:
 	}
 };
 
-int main() {
-	Layer_Dense layer1(4, 5);
-	Layer_Dense layer2(5, 2);
-	Activation_ReLU activation1;
 
-	/* Sample input */
-	vector<vector<double>> X = {
-		{1, 2, 3, 2.5},
-     	{2.0, 5.0, -1.0, 2.0},
-     	{-1.5, 2.7, 3.3, -0.8}
- 	};
+
+int main() {
+	Layer_Dense layer1(2, 5);
+	Activation_ReLU activation1;
+	auto data = spiral_data(100, 3);
+
+	vector<vector<double>> X(data.first);
+	vector<double> y(data.second);
 
  	cout << "First layer forward pass output:" << endl;
  	layer1.forward(X);
@@ -116,13 +115,5 @@ int main() {
 
  	cout << endl << "First layer activated output:" << endl;
  	activation1.forward(layer1.output);
- 	printOutput(activation1.output);
-
- 	cout << endl << "Second layer forward pass output:" << endl;
- 	layer2.forward(layer1.output);
- 	printOutput(layer2.output);
-
- 	cout << endl << "Second layer activated output:" << endl;
- 	activation1.forward(layer2.output);
  	printOutput(activation1.output);
 }
