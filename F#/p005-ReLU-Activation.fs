@@ -10,7 +10,6 @@ type LayerDense(nInputs : int, nNeurons : int) =
     member _.Forward inputs = 
         Matrix.AddVectorToEachRow (inputs * weights) biases 
 
-
 type ActivationReLU() =
     static member Forward = Matrix.map (max 0.0)
 
