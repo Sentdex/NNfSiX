@@ -1,8 +1,6 @@
 
 spiral_data.txt was generated using the following python code
 
-`sscanf()` has a rounding error when reading the file.
-
 ```python
 import numpy as np 
 import nnfs
@@ -20,3 +18,4 @@ for z in X:
 
 f.close();
 ```
+`sscanf()` has a rounding error when reading the file.
