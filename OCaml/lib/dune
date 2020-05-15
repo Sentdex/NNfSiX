@@ -1,0 +1,5 @@
+(library
+ (name nnfsix_utils)
+ (libraries ppx_deriving)
+ (preprocess (pps ppx_deriving.show))
+ )

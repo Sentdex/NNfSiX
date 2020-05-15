@@ -1,19 +1,11 @@
-(* Function composition *)
-let (%) g f x = g (f x)
-
-let dot_product input weights bias =
-  Array.map2 ( *. ) input weights
-  |> Array.fold_left (+.) bias
+open Nnfsix_utils
 
 type layers = {weights: float array array; biases: float array}
 
 let zeros n = Array.make n 0.
 
-let rand_weight n_inputs n_neurons = Array.init n_neurons
-    (fun _ -> Array.init n_inputs (fun _ -> Random.float 1.) )
-
 let make_layer n_inputs n_neurons =
-  {weights = rand_weight n_inputs n_neurons; biases = zeros n_neurons}
+  {weights = rand_2d n_neurons n_inputs 0.1; biases = zeros n_neurons}
 
 let forward {weights; biases} inputs =
   Array.map2 (dot_product inputs) weights biases
