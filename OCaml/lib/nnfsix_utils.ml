@@ -13,8 +13,6 @@ let dot_product input weights bias =
   Array.map2 ( *. ) input weights
   |> Array.fold_left (+.) bias
 
-let map2 f (x, y) = f x , f y
-
 let zip a1 a2 = List.map2 (fun t1 t2 -> t1, t2) a1 a2 
 
 let unzip a = List.fold_right (fun (t1, t2) (a1, a2) -> t1::a1, t2::a2)  a ([], [])
