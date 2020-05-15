@@ -27,7 +27,7 @@ let print_output output = output |> [%show: float array list] |> print_endline
  * - Relu layers have no parameters *)
 let manual_apply x = x
        |> List.map @@ Dense.forward layer1_params
-       |> List.map @@ Activation_relu.forward
+       |> List.map Activation_relu.forward
 
 (* We can also note that a layer is nothing more than a
  * float array -> float array function - it takes a float array
