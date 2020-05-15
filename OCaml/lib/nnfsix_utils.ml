@@ -19,10 +19,6 @@ let zip a1 a2 = List.map2 (fun t1 t2 -> t1, t2) a1 a2
 
 let unzip a = List.fold_right (fun (t1, t2) (a1, a2) -> t1::a1, t2::a2)  a ([], [])
 
-let array_unzip a = Array.to_list a
-                    |> unzip
-                    |> map2 Array.of_list
-
 (*
  * #https://cs231n.github.io/neural-networks-case-study/
 def spiral_data(points, classes):
@@ -49,7 +45,7 @@ let spiral_data points classes =
         (linspace (float_of_int @@ class_number * 4) (float_of_int @@ (class_number + 1) * 4) points)
         (rand_1d points 0.2) in
     Array.map2 (fun r t -> [|r *. (sin (2.5 *. t)); r *. (cos (2.5 *. t))|]) r t, Array.make points class_number
-    in
+  in
   List.init classes init_subarray
-|> unzip
-|> fun (x, y) -> Array.to_list @@ Array.concat x, Array.concat y
+  |> unzip
+  |> fun (x, y) -> Array.to_list @@ Array.concat x, Array.concat y
