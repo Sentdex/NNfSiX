@@ -133,8 +133,6 @@ extension Array where Element == [Double] {
     }
 }
 
-let π = Double.pi
-
 public func sin(radians: [[Double]]) -> [[Double]] {
     return radians.map{ val in sin(radians: val) }
 }
