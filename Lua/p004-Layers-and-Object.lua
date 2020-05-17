@@ -262,8 +262,9 @@ function Layer_Dense:forward(inputs)
 end
 
 -- Code from video
-local mat = require(script.Matrix)
-local Layer_Dense = require(script.DenseLayer)
+ -- Usually you would require these as modules
+local mat = Matrix
+local Layer_Dense = Layer_Dense
 
 local X = mat.from2DArray({
 	{1, 2, 3, 2.5},
