@@ -9,7 +9,7 @@
 
 #define RAND_HIGH_RANGE (0.10)
 #define RAND_MIN_RANGE (-0.10)
-#define INIT_biasES (0.0)
+#define INIT_BIASES (0.0)
 
 #define NET_BATCH_SIZE 300
 #define NET_INPUT_LAYER_1_SIZE 2 // can be replaced with (sizeof(var)/sizeof(double))
@@ -115,7 +115,7 @@ void layer_init(layer_dense_t *layer,int intput_size,int output_size, int batch_
 
     int i = 0;
     for(i = 0; i < (output_size); i++){
-           layer->biase[i] = INIT_biasES;
+           layer->biase[i] = INIT_BIASES;
     }
     for(i = 0; i < (intput_size*output_size); i++){
            layer->weights[i] = rand_range(RAND_MIN_RANGE,RAND_HIGH_RANGE);
