@@ -114,7 +114,6 @@ int main(int argc, char** argv)
 
 	layer_dense layer1 = layer_dense(X[0].size(), 5);
 	layer_dense layer2 = layer_dense(layer1.neurons, 4);
-
 	activation_relu activation1;
 
 	layer1.print();
