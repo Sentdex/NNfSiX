@@ -113,17 +113,28 @@ int main(int argc, char** argv)
 					{-1.5, 2.7, 3.3, -0.8} };
 
 	layer_dense layer1 = layer_dense(X[0].size(), 5);
-	layer_dense layer2 = layer_dense(layer1.neurons, 4);
+	layer_dense layer2 = layer_dense(layer1.neurons, 2);
 	activation_relu activation1;
 
-	layer1.print();
-	layer1.forward(X);
-	layer1.output();
-	
-	activation1.forward(layer1.outputs);
-	activation1.output();
+	layer1.weights = {{ 0.17640523, 0.04001572,  0.0978738,  0.22408932,   0.1867558 },
+					  {-0.09772779, 0.09500884, -0.01513572, -0.01032189,  0.04105985},
+					  { 0.01440436, 0.14542735,  0.07610377, 0.0121675,    0.04438632},
+					  { 0.03336743, 0.14940791, -0.02051583, 0.03130677,  -0.08540957}};
 
-	layer2.print();
-	layer2.forward(activation1.outputs);
+	layer2.weights = {{-0.25529898,  0.06536186},
+					  { 0.08644362, -0.0742165 },
+					  { 0.22697546, -0.14543657},
+					  { 0.00457585, -0.01871839},
+					  { 0.15327792,  0.14693588}};
+
+	//layer1.print();
+	layer1.forward(X);
+	//layer1.output();
+	
+	//activation1.forward(layer1.outputs);
+	//activation1.output();
+
+	//layer2.print();
+	layer2.forward(layer1.outputs);
 	layer2.output();
 }
