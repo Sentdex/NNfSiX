@@ -9,7 +9,7 @@
 
 #define RAND_HIGH_RANGE (0.10)
 #define RAND_MIN_RANGE (-0.10)
-#define INIT_BAISES (0.0)
+#define INIT_biasES (0.0)
 
 #define NET_BATCH_SIZE 300
 #define NET_INPUT_LAYER_1_SIZE 2 // can be replaced with (sizeof(var)/sizeof(double))
@@ -20,24 +20,24 @@ typedef void (*actiavtion_callback)(double * output);
 
 typedef struct{
     double *weights;
-    double *baise;
+    double *biase;
     double *output;
     int input_size;
     int output_size;
 	actiavtion_callback callback;
 }layer_dense_t;
 
-/**@brief Get the dot product of a neuron and add the bais.
+/**@brief Get the dot product of a neuron and add the bias.
  *
  * @param[in]   input   	Pointer to the first address of the inputs.
  * @param[in]   weights  	Pointer to the first address of the weights.
- * @param[in]   bais	 	Pointer to the value of the neurons bais.
+ * @param[in]   bias	 	Pointer to the value of the neurons bias.
  * @param[in]   input_size  number of neurons in the input layer.
  * @param[in]   callback    pionter to the activation callback function.
  * @retval[out] output		the dot product of the neuron.
  */
 
-double dot_product(double *input,double *weights,double *bais,int input_size,actiavtion_callback callback){
+double dot_product(double *input,double *weights,double *bias,int input_size,actiavtion_callback callback){
     int i = 0;
     double output = 0.0;
     for(i = 0;i<input_size;i++){
@@ -46,26 +46,26 @@ double dot_product(double *input,double *weights,double *bais,int input_size,act
 	if(callback != NULL){
         callback(&output);
     }
-    output += *bais;
+    output += *bias;
     return output;
 }
 
-/**@brief Get the dot products of each neuron and add the bais and store it in an output array.
+/**@brief Get the dot products of each neuron and add the bias and store it in an output array.
  *
  * @param[in]   	input   		Pointer to the first address of the inputs.
  * @param[in]   	weights  		Pointer to the first address of the weights.
- * @param[in]   	bais	 		Pointer to the first address of the neuron bases.
+ * @param[in]   	bias	 		Pointer to the first address of the neuron bases.
  * @param[in]   	input_size  	number of neurons in the input layer.
  * @param[in/out]   outputs  		Pointer to the first address of the outputs array.
  * @param[in]   	output_size  	number of neurons in the output layer.
  * @param[in]       callback        pionter to the activation callback function.
  */
 
-void layer_output(double *input,double *weights,double *bais,int input_size,double *outputs,int output_size,actiavtion_callback callback){
+void layer_output(double *input,double *weights,double *bias,int input_size,double *outputs,int output_size,actiavtion_callback callback){
     int i = 0;
     int offset = 0;
     for(i = 0; i < output_size; i++){
-        outputs[i] = dot_product(input,weights + offset,&bais[i],input_size,callback);
+        outputs[i] = dot_product(input,weights + offset,&bias[i],input_size,callback);
         offset+=input_size;
     }
 }
@@ -79,7 +79,7 @@ double rand_range(double min, double max)
 }
 
 
-/**@brief Setup a layer with random weights and bais as well as allocating memory for the storage buffers.
+/**@brief Setup a layer with random weights and bias as well as allocating memory for the storage buffers.
  *
  * @param[in]   	layer   		Pointer to an empty layer with no values.
  * @param[in]   	intput_size  	size of the input layer.
@@ -101,9 +101,9 @@ void layer_init(layer_dense_t *layer,int intput_size,int output_size, int batch_
         printf("weights mem error\n");
         return;
     }
-    layer->baise   = malloc(sizeof(double) * output_size);
-    if(layer->baise == NULL){
-        printf("baise mem error\n");
+    layer->biase   = malloc(sizeof(double) * output_size);
+    if(layer->biase == NULL){
+        printf("biase mem error\n");
         return;
     }
     layer->output = malloc(sizeof(double) * output_size * batch_size);
@@ -115,7 +115,7 @@ void layer_init(layer_dense_t *layer,int intput_size,int output_size, int batch_
 
     int i = 0;
     for(i = 0; i < (output_size); i++){
-           layer->baise[i] = INIT_BAISES;
+           layer->biase[i] = INIT_biasES;
     }
     for(i = 0; i < (intput_size*output_size); i++){
            layer->weights[i] = rand_range(RAND_MIN_RANGE,RAND_HIGH_RANGE);
@@ -127,10 +127,10 @@ void deloc_layer(layer_dense_t *layer){
     if(layer->weights != NULL){
         free(layer->weights);
     }
-    if(layer->baise != NULL){
-        free(layer->baise);
+    if(layer->biase != NULL){
+        free(layer->biase);
     }
-    if(layer->baise != NULL){
+    if(layer->biase != NULL){
         free(layer->output);
     }
 }
@@ -144,7 +144,7 @@ void deloc_layer(layer_dense_t *layer){
 void forward(layer_dense_t *previos_layer,layer_dense_t *next_layer, int batch_index){
     int offset = next_layer->output_size * batch_index;
     int input_offset = next_layer->input_size * batch_index;
-    layer_output((previos_layer->output + input_offset),next_layer->weights,next_layer->baise,next_layer->input_size,(next_layer->output + offset),next_layer->output_size,next_layer->callback);
+    layer_output((previos_layer->output + input_offset),next_layer->weights,next_layer->biase,next_layer->input_size,(next_layer->output + offset),next_layer->output_size,next_layer->callback);
 }
 
 
