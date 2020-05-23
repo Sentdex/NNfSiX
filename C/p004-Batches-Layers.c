@@ -18,7 +18,7 @@
 
 typedef struct{
     double *weights;
-    double *bias;
+    double *biase;
     double *output;
     int input_size;
     int output_size;
@@ -93,9 +93,9 @@ void layer_init(layer_dense_t *layer,int intput_size,int output_size, int batch_
         printf("weights mem error\n");
         return;
     }
-    layer->bias   = malloc(sizeof(double) * output_size);
-    if(layer->bias == NULL){
-        printf("bias mem error\n");
+    layer->biase   = malloc(sizeof(double) * output_size);
+    if(layer->biase == NULL){
+        printf("biase mem error\n");
         return;
     }
     layer->output = malloc(sizeof(double) * output_size * batch_size);
@@ -107,7 +107,7 @@ void layer_init(layer_dense_t *layer,int intput_size,int output_size, int batch_
 
     int i = 0;
     for(i = 0; i < (output_size); i++){
-           layer->bias[i] = INIT_BIASES;
+           layer->biase[i] = INIT_BIASES;
     }
     for(i = 0; i < (intput_size*output_size); i++){
            layer->weights[i] = rand_range(RAND_MIN_RANGE,RAND_HIGH_RANGE);
@@ -119,10 +119,10 @@ void deloc_layer(layer_dense_t *layer){
     if(layer->weights != NULL){
         free(layer->weights);
     }
-    if(layer->bias != NULL){
-        free(layer->bias);
+    if(layer->biase != NULL){
+        free(layer->biase);
     }
-    if(layer->bias != NULL){
+    if(layer->biase != NULL){
         free(layer->output);
     }
 }
@@ -136,7 +136,7 @@ void deloc_layer(layer_dense_t *layer){
 void forward(layer_dense_t *previos_layer,layer_dense_t *next_layer, int batch_index){
     int offset = next_layer->output_size * batch_index;
     int input_offset = next_layer->input_size * batch_index;
-    layer_output((previos_layer->output + input_offset),next_layer->weights,next_layer->bias,next_layer->input_size,(next_layer->output + offset),next_layer->output_size);
+    layer_output((previos_layer->output + input_offset),next_layer->weights,next_layer->biase,next_layer->input_size,(next_layer->output + offset),next_layer->output_size);
 }
 
 
@@ -204,12 +204,9 @@ int main()
 
 
 /* test main not using random numbers
-
 int main()
-
     //seed the random values
     srand (time(NULL));
-
     int i = 0;
     int j = 0;
     int k = 0;
@@ -228,42 +225,30 @@ int main()
                                                                 {-0.26, -0.27, 0.17, 0.87},
                                                                 };
     double bias[NET_HIDDEN_LAYER_2_SIZE] = {2.0,3.0,0.5};
-
-
     double layer1_output[NET_BATCH_SIZE][NET_HIDDEN_LAYER_2_SIZE];
-
     double weights2[NET_OUTPUT_LAYER_SIZE][NET_HIDDEN_LAYER_2_SIZE] = {
                                                                 {0.1, -0.14, 0.5},
                                                                 {-0.5, 0.12, -0.33},
                                                                 {-0.44, 0.73, -0.13},
                                                                 };
     double bias2[NET_OUTPUT_LAYER_SIZE] = {-1.0,2.0,-0.5};
-
     double layer2_output[NET_BATCH_SIZE][NET_OUTPUT_LAYER_SIZE];
-
-
     for(i = 0; i < NET_BATCH_SIZE;i++){
         X[i].output = &X_input[i][0];
     }
-
     layer1.weights = weights;
-    layer1.bias = bias;
+    layer1.biase = bias;
     layer1.input_size = NET_INPUT_LAYER_1_SIZE;
     layer1.output_size = NET_HIDDEN_LAYER_2_SIZE;
     layer1.output = layer1_output;
-
-
     layer2.weights = weights2;
-    layer2.bias = bias2;
+    layer2.biase = bias2;
     layer2.input_size = NET_HIDDEN_LAYER_2_SIZE;
     layer2.output_size = NET_OUTPUT_LAYER_SIZE;
     layer2.output = layer2_output;
-
-
     for(i = 0; i < NET_BATCH_SIZE;i++){
         forward(&X,&layer1,i);
     }
-
     offset = 0;
     for(i = 0; i < NET_BATCH_SIZE;i++){
         printf("batch: %d layerx_output: ",i);
@@ -274,12 +259,9 @@ int main()
             printf("\n");
     }
     printf("\n");
-
-
     for(i = 0; i < NET_BATCH_SIZE;i++){
         forward(&layer1,&layer2,i);
     }
-
     offset = 0;
     for(i = 0; i < NET_BATCH_SIZE;i++){
         printf("batch: %d layerx_output: ",i);
@@ -290,8 +272,5 @@ int main()
             printf("\n");
     }
     printf("\n");
-
 }
-
-
 */
