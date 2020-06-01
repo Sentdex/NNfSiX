@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 
+#a structure to later use and link a specific thing(a dog for example) with biases, weights and later after training its average final number(the number of the final neural node)
 struct Links
 {
 	std::string name;
@@ -20,10 +21,12 @@ public:
 	void TrainNeural(std::string name, double setsOfSets[10][3]) 
 	{
 		std::cout << "Training to visualise " + name + "\n";
+		#Save the name passed to this function(dog or cat) inside the first index of the private array of "Links" structure
 		saveLink[cnter].name = name;
 		cnter++;
 		for (int i = 0; i < 10; i++)
 		{
+			#Find the number after multiplying weights and adding bias.
 			double total = 0;
 			for (int z = 0; z < 3; z++)
 			{
@@ -33,11 +36,16 @@ public:
 			double tmpAv = saveLink[cnter - 1].average;
 
 			std::cout << "Training set number: " << i << std::endl;
-			if (tmpAv > 0)
+			if (tmpAv > 0) #Make sure this is not the first loop by checking that the 1st index in array of "Links" has the "average" variable set to higher than 0(will happen in 2nd loop)
 			{
+				#if it entered here this must be the 2nd loop
+				
+				#Check if total now is higher than what we got in the previous loop, if it is decrease the bias or weights
 				if (total > tmpAv)
 				{
 					std::cout << "Too high.. Decreasing..\n";
+					
+					#Check if weights are already too low
 					bool enoughWeight = false;
 					for (int b = 0; b < 3; b++)
 					{
@@ -47,6 +55,7 @@ public:
 							break;
 						}
 					}
+					#if weights are already too low, then decrease bias instead, or else decrease the highest out of the three weights
 					if (enoughWeight)
 					{
 						saveLink[cnter - 1].bias -= 1.5;
@@ -75,9 +84,11 @@ public:
 						}
 					}
 				}
-				else
+				else #Else total must be lower than what we got in the previous loop, increase the bias or weights
 				{
 					std::cout << "Too low, Increasing..\n";
+					
+					#Check if weights are already too high
 					bool enoughWeight = false;
 					for (int b = 0; b < 3; b++)
 					{
@@ -87,6 +98,7 @@ public:
 							break;
 						}
 					}
+					#if weights are already too high, then increase bias instead, or else increase the lowest out of the three weights
 					if (enoughWeight)
 					{
 						saveLink[cnter - 1].bias += 1.5;
@@ -164,9 +176,11 @@ public:
 
 int main()
 {
+	#dog and cat fake datasets to use for training, 3 different numbers represent the average RGB of the picture(THESE DATASETS ARE RANDOM AND ARE NOT REALLY THE AVERAGE RGB OF AN ACTUAL PICTURE).
 	double dog[10][3] = { { 144, 199, 143 }, { 155, 200, 133 }, { 166, 185, 123 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 } };
 	double cat[10][3] = { { 122, 188, 155 }, { 112, 178, 145 }, { 126, 195, 149 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 } };
 
+	#An unknown dataset to use later and predict if it's a dog or a cat.
 	double unknown[3] = { 131, 190, 147 };
 
 	NeuralNet train;
