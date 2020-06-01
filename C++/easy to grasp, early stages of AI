@@ -177,7 +177,7 @@ public:
 int main()
 {
 	#dog and cat fake datasets to use for training, 3 different numbers represent the average RGB of the picture(THESE DATASETS ARE RANDOM AND ARE NOT REALLY THE AVERAGE RGB OF AN ACTUAL PICTURE).
-	double dog[10][3] = { { 144, 199, 143 }, { 155, 200, 133 }, { 166, 185, 123 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 } };
+	double dog[10][3] = { { 144, 199, 143 }, { 155, 200, 133 }, { 166, 185, 123 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 } }; #truely biased? huhuhu
 	double cat[10][3] = { { 122, 188, 155 }, { 112, 178, 145 }, { 126, 195, 149 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 } };
 
 	#An unknown dataset to use later and predict if it's a dog or a cat.
