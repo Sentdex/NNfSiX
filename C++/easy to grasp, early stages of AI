@@ -38,7 +38,7 @@ public:
 			std::cout << "Training set number: " << i << std::endl;
 			if (tmpAv > 0) #Make sure this is not the first loop by checking that the 1st index in array of "Links" has the "average" variable set to higher than 0(will happen in 2nd loop)
 			{
-				#if it entered here this must be the 2nd loop
+				#if it entered here this must be the 2nd loop or later
 				
 				#Check if total now is higher than what we got in the previous loop, if it is decrease the bias or weights
 				if (total > tmpAv)
@@ -135,17 +135,23 @@ public:
 	{
 		double save[10];
 		int svCnt = 0;
+		#loop thru the private "Links" structure until the average inside it equals to 0
 		for (int i = 0; i < 10; i++)
 		{
 			if (saveLink[i].average != 0)
 			{
+				#Find the average that you get after multiplying a specific structures'(example dog or cat link) weights and after adding bias
 				double total = 0;
 				for (int z = 0; z < 3; z++)
 				{
 					total += set[z] * saveLink[i].weight[z];
 				}
 				total += saveLink[i].bias;
+				
+				#we need to find out which is larger so we can properly minus from the correct one
 				if (total < saveLink[i].average)
+				#we then save the difference to the "save" array at the correct index to relate it to the correct thing(dog or cat)
+				#so that we can later loop thru it and find out which is lowest(lowest meaning the least difference meaning is closest to the answer)
 					save[i] = saveLink[i].average - total;
 				else
 					save[i] = total - saveLink[i].average;
@@ -155,6 +161,8 @@ public:
 				break;
 		}
 
+		#Here we find the lowest difference
+		#The "save" array is properly indexed and aligned to match the proper structure(might the structure contain a string with the name "dog" or "cat")
 		double lowest = save[0];
 		for (int i = 1; i < svCnt; i++)
 		{
@@ -163,12 +171,13 @@ public:
 				lowest = save[i];
 			}
 		}
-
+		
+		#We loop thru the "save" array and stop and return when we find that the local variable "lowest" is equal to "save[i]", "i" being the index at where lowest was found.
 		for (int i = 0; i < 10; i++)
 		{
 			if (lowest == save[i])
 			{
-				return saveLink[i].name;
+				return saveLink[i].name; #Here we return the "Links" structure private variable "name" at the proper index "i" where we found the "save[i]" to be the lowest difference
 			}
 		}
 	}
