@@ -1,0 +1,180 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include <iostream>
+
+struct Links
+{
+	std::string name;
+	double weight[3] = { 0.8, 0.6, 0.7 };
+	double bias = 15;
+	double average = 0;
+};
+
+class NeuralNet 
+{
+private:
+	Links saveLink[10];
+	int cnter = 0;
+public:
+	void TrainNeural(std::string name, double setsOfSets[10][3]) 
+	{
+		std::cout << "Training to visualise " + name + "\n";
+		saveLink[cnter].name = name;
+		cnter++;
+		for (int i = 0; i < 10; i++)
+		{
+			double total = 0;
+			for (int z = 0; z < 3; z++)
+			{
+				total += setsOfSets[i][z] * saveLink[cnter - 1].weight[z];
+			}
+			total += saveLink[cnter - 1].bias;
+			double tmpAv = saveLink[cnter - 1].average;
+
+			std::cout << "Training set number: " << i << std::endl;
+			if (tmpAv > 0)
+			{
+				if (total > tmpAv)
+				{
+					std::cout << "Too high.. Decreasing..\n";
+					bool enoughWeight = false;
+					for (int b = 0; b < 3; b++)
+					{
+						if (saveLink[cnter - 1].weight[b] < 0.6)
+						{
+							enoughWeight = true;
+							break;
+						}
+					}
+					if (enoughWeight)
+					{
+						saveLink[cnter - 1].bias -= 1.5;
+					}
+					else
+					{
+						double highest = saveLink[cnter - 1].weight[0];
+						for (int c = 1; c < 3; c++)
+						{
+							if (saveLink[cnter - 1].weight[c] > highest)
+							{
+								highest = saveLink[cnter - 1].weight[c];
+								if (c == 2)
+								{
+									saveLink[cnter - 1].weight[2] -= 0.1;
+								}
+							}
+							if (c == 2 && highest != saveLink[cnter - 1].weight[1])
+							{
+								saveLink[cnter - 1].weight[0] -= 0.1;
+							}
+							else if (c == 2)
+							{
+								saveLink[cnter - 1].weight[1] -= 0.1;
+							}
+						}
+					}
+				}
+				else
+				{
+					std::cout << "Too low, Increasing..\n";
+					bool enoughWeight = false;
+					for (int b = 0; b < 3; b++)
+					{
+						if (saveLink[cnter - 1].weight[b] > 0.8)
+						{
+							enoughWeight = true;
+							break;
+						}
+					}
+					if (enoughWeight)
+					{
+						saveLink[cnter - 1].bias += 1.5;
+					}
+					else
+					{
+						double lowest = saveLink[cnter - 1].weight[0];
+						for (int c = 1; c < 3; c++)
+						{
+							if (saveLink[cnter - 1].weight[c] < lowest)
+							{
+								lowest = saveLink[cnter - 1].weight[c];
+								if (c == 2)
+								{
+									saveLink[cnter - 1].weight[2] += 0.1;
+								}
+							}
+							if (c == 2 && lowest != saveLink[cnter - 1].weight[1])
+							{
+								saveLink[cnter - 1].weight[0] += 0.1;
+							}
+							else if (c == 2)
+							{
+								saveLink[cnter - 1].weight[1] += 0.1;
+							}
+						}
+					}
+				}
+			}
+			saveLink[cnter - 1].average = total;
+		}
+	}
+	std::string Predict(double set[3])
+	{
+		double save[10];
+		int svCnt = 0;
+		for (int i = 0; i < 10; i++)
+		{
+			if (saveLink[i].average != 0)
+			{
+				double total = 0;
+				for (int z = 0; z < 3; z++)
+				{
+					total += set[z] * saveLink[i].weight[z];
+				}
+				total += saveLink[i].bias;
+				if (total < saveLink[i].average)
+					save[i] = saveLink[i].average - total;
+				else
+					save[i] = total - saveLink[i].average;
+				svCnt++;
+			}
+			else
+				break;
+		}
+
+		double lowest = save[0];
+		for (int i = 1; i < svCnt; i++)
+		{
+			if (save[i] < lowest)
+			{
+				lowest = save[i];
+			}
+		}
+
+		for (int i = 0; i < 10; i++)
+		{
+			if (lowest == save[i])
+			{
+				return saveLink[i].name;
+			}
+		}
+	}
+};
+
+int main()
+{
+	double dog[10][3] = { { 144, 199, 143 }, { 155, 200, 133 }, { 166, 185, 123 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 }, { 155, 200, 133 } };
+	double cat[10][3] = { { 122, 188, 155 }, { 112, 178, 145 }, { 126, 195, 149 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 }, { 122, 188, 155 } };
+
+	double unknown[3] = { 131, 190, 147 };
+
+	NeuralNet train;
+	train.TrainNeural("dog", dog);
+	train.TrainNeural("cat", cat);
+	std::string answer = train.Predict(unknown);
+
+	std::cout << answer << std::endl;
+
+	return 0;
+}
