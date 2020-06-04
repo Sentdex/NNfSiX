@@ -37,12 +37,7 @@ type X = Array<f64, ndarray::Dim<[usize; 2]>>;
 type Y = Array<f64, ndarray::Dim<[usize; 1]>>;
 
 fn create_data(points: usize, classes: usize) -> (Array<f64, ndarray::Dim<[usize; 2]>>, Array<f64, ndarray::Dim<[usize; 1]>>){
-	//let mut X = Array2::zeros((points * classes, 2));
-	//let mut y = Array::zeros(points*classes);
-	//for class_number in 0..classes {
-	//	let r = Array::linspace(0.0, 1.0, points);
-	//	let t = Array::linspace((class_number*4) as f64, ((class_number+1)*4) as f64, points) + 0.2*Array::random((points), Uniform::new(0.0, 1.0));
-	let mut y: ndarray::Array<f64, ndarray::Dim<[usize; 1]>> = Array::zeros(points * classes);
+    let mut y: ndarray::Array<f64, ndarray::Dim<[usize; 1]>> = Array::zeros(points * classes);
     let mut x = Vec::with_capacity(points * classes * 2);
 
     for class_number in 0..classes {
@@ -102,10 +97,8 @@ fn main() {
     let (x, y) = create_data(100, 3);
 
     let mut l1 = Layer_Dense::init(2, 5);
-    //let mut l2 = Layer_Dense::init(5, 2);
     l1.forward(x);
     println!("{:?}", l1.output);
-    //Activation_ReLU{output: vec![0.0, 0.0, 0.0, 0.0, 0.0]};
     let mut activated = Activation_ReLU::init();
     activated.ActivationReLU(l1.output.unwrap());
     println!("{:?}", activated.output);
