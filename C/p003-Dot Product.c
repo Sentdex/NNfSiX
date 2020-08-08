@@ -8,22 +8,22 @@
 #define NET_INPUT_LAYER_SIZE 4 // can be replaced with (sizeof(var)/sizeof(double))
 #define NET_OUTPUT_LAYER_SIZE 3 // can be replaced with (sizeof(var)/sizeof(double))
 
-/**@brief Get the dot product of a neuron and add the bais.
+/**@brief Get the dot product of a neuron and add the bias.
  *
  * @param[in]   input   	Pointer to the first address of the inputs.
  * @param[in]   weights  	Pointer to the first address of the weights.
- * @param[in]   bais	 	Pointer to the value of the neurons bais.
- * @param[in]   input_size  number of neurons in the input layer.
- * @retval[out] output		the dot product of the neuron.
+ * @param[in]   bais	 	Pointer to the value of the neurons bias.
+ * @param[in]   input_size  Number of neurons in the input layer.
+ * @retval[out] output		The dot product of the neuron.
  */
 
-double dot_product(double *input,double *weights,double *bais,int input_size){
+double dot_product(double *input, double *weights, double *bias, int input_size){
     int i = 0;
     double output = 0.0;
-    for(i = 0;i<input_size;i++){
-        output += input[i]*weights[i];
+    for(i = 0; i<input_size; i++){
+        output += input[i] * weights[i];
     }
-    output += *bais;
+    output += *bias;
     return output;
 }
 
@@ -37,12 +37,12 @@ double dot_product(double *input,double *weights,double *bais,int input_size){
  * @param[in]   	output_size  	number of neurons in the output layer.
  */
 
-void layer_output(double *input,double *weights,double *bais,int input_size,double *outputs,int output_size){
+void layer_output(double *input, double *weights, double *bias, int input_size, double *outputs, int output_size){
     int i = 0;
     int offset = 0;
     for(i = 0; i < output_size; i++){
-        outputs[i] = dot_product(input,weights + offset,&bais[i],input_size);
-        offset+=input_size;
+        outputs[i] = dot_product(input, weights + offset, &bias[i], input_size);
+        offset += input_size;
     }
 }
 
@@ -54,11 +54,11 @@ int main(void)
                                                                 {0.5, -0.91, 0.26, -0.5},
                                                                 {-0.26, -0.27, 0.17, 0.87},
                                                                 };
-    double bais[NET_OUTPUT_LAYER_SIZE] = {2.0,3.0,0.5};
+    double bias[NET_OUTPUT_LAYER_SIZE] = {2.0,3.0,0.5};
 
     double output[NET_OUTPUT_LAYER_SIZE] = {0.0};
-    layer_output(&input[0],&weights[0][0],&bais[0],NET_INPUT_LAYER_SIZE,&output[0],NET_OUTPUT_LAYER_SIZE);
-    printf("nur output: %f %f %f\n",output[0],output[1],output[2]);
+    layer_output(&input[0], &weights[0][0], &bias[0], NET_INPUT_LAYER_SIZE, &output[0], NET_OUTPUT_LAYER_SIZE);
+    printf("nur output: %f %f %f\n", output[0], output[1], output[2]);
 
     return 0;
 }
