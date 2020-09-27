@@ -1,64 +1,23 @@
-/**
- * Creates a simple neuron layer using dot product
- * Associated YT NNFS tutorial: https://www.youtube.com/watch?v=tMrbN67U9d4
- */
+/*
+*   Doing dot product with a layer of neurons and multiple inputs
+*   Associated YT NNFS tutorial: https://www.youtube.com/watch?v=tMrbN67U9d4
+*/
 
 #include <stdio.h>
 
-#define NET_INPUT_LAYER_SIZE 4 // can be replaced with (sizeof(var)/sizeof(double))
-#define NET_OUTPUT_LAYER_SIZE 3 // can be replaced with (sizeof(var)/sizeof(double))
-
-/**@brief Get the dot product of a neuron and add the bais.
- *
- * @param[in]   input   	Pointer to the first address of the inputs.
- * @param[in]   weights  	Pointer to the first address of the weights.
- * @param[in]   bais	 	Pointer to the value of the neurons bais.
- * @param[in]   input_size  number of neurons in the input layer.
- * @retval[out] output		the dot product of the neuron.
- */
-
-double dot_product(double *input,double *weights,double *bais,int input_size){
-    int i = 0;
-    double output = 0.0;
-    for(i = 0;i<input_size;i++){
-        output += input[i]*weights[i];
+int main() {
+    float inputs[4] = {1.0f, 2.0f, 3.0f, 2.5f};
+    float weights[3][4] = {{0.2f, 0.8f, -0.5f, 1.0f},{0.5f, -0.91f, 0.26f, -0.5f},{-0.26f, -0.27f, 0.17f, 0.87f}};
+    float biases[3] = {2.0f, 3.0f, 0.5f};
+    float neuron_output, layer_outputs[3];
+    int inner_loop, outer_loop;
+    for(outer_loop = 0; outer_loop < 3; outer_loop++){
+        neuron_output = 0;
+        for(inner_loop = 0; inner_loop < 4; inner_loop++)
+            neuron_output += weights[outer_loop][inner_loop] * inputs[inner_loop];
+        neuron_output += biases[outer_loop];
+        layer_outputs[outer_loop] = neuron_output;
     }
-    output += *bais;
-    return output;
-}
-
-/**@brief Get the dot products of each neuron and add the bais and store it in an output array.
- *
- * @param[in]   	input   		Pointer to the first address of the inputs.
- * @param[in]   	weights  		Pointer to the first address of the weights.
- * @param[in]   	bais	 		Pointer to the first address of the neuron bases.
- * @param[in]   	input_size  	number of neurons in the input layer.
- * @param[in/out]   outputs  		Pointer to the first address of the outputs array.
- * @param[in]   	output_size  	number of neurons in the output layer.
- */
-
-void layer_output(double *input,double *weights,double *bais,int input_size,double *outputs,int output_size){
-    int i = 0;
-    int offset = 0;
-    for(i = 0; i < output_size; i++){
-        outputs[i] = dot_product(input,weights + offset,&bais[i],input_size);
-        offset+=input_size;
-    }
-}
-
-int main(void)
-{
-    double input[NET_INPUT_LAYER_SIZE] = {1.0, 2.0, 3.0, 2.5};
-    double weights[NET_OUTPUT_LAYER_SIZE][NET_INPUT_LAYER_SIZE] = {
-                                                                {0.2, 0.8, -0.5, 1.0},
-                                                                {0.5, -0.91, 0.26, -0.5},
-                                                                {-0.26, -0.27, 0.17, 0.87},
-                                                                };
-    double bais[NET_OUTPUT_LAYER_SIZE] = {2.0,3.0,0.5};
-
-    double output[NET_OUTPUT_LAYER_SIZE] = {0.0};
-    layer_output(&input[0],&weights[0][0],&bais[0],NET_INPUT_LAYER_SIZE,&output[0],NET_OUTPUT_LAYER_SIZE);
-    printf("nur output: %f %f %f\n",output[0],output[1],output[2]);
-
+    printf("[%f, %f, %f]\n", layer_outputs[0], layer_outputs[1], layer_outputs[2]);
     return 0;
 }
