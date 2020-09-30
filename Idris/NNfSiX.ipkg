@@ -1,0 +1,4 @@
+package NNfSiX
+
+pkgs = contrib
+     , effects
