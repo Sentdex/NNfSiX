@@ -18,11 +18,11 @@ type
 
 proc initLayerDense(inputs, neurons :int) :LayerDense =
     new result
-    result.weights = randomMatrix(inputs, neurons, max=0.10)#neurons, inputs, max=0.10) # rows X cols
+    result.weights = randomMatrix(inputs, neurons, max=0.10)# no need for transposing since we control the initialization
     result.biases = zeros(neurons)
 
 proc forward(layer :LayerDense, inputs :Matrix[float64]) =
-    layer.output = inputs * layer.weights#.T #transpose #ref: https://github.com/unicredit/neo#blas-operations
+    layer.output = inputs * layer.weights
     for i,val in layer.output: #adds biases value by value in the matrix, haven't better solution
         layer.output[i[0],i[1]] = layer.output[i[0],i[1]] + layer.biases[i[1]]
 
