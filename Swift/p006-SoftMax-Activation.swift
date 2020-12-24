@@ -54,14 +54,17 @@ class SoftMax: Activation {
 
     public func forward(inputs:[[Double]]) {
         // exp(inputs - inputs.max)
-        let exp_values = zip(inputs, inputs.map { $0.max()! })
-            .map { (input, max_value) in
-                input.map { value in exp(value - max_value) }
+        let exp_values = inputs.map { row -> [Double] in
+            guard let max_value = row.max() else {
+                fatalError("invalid inputs")
             }
+            return row.map { value in
+                exp(value - max_value)
+            }
+        }
         
         // exp_values/exp_values.sum
-        self.output = zip(exp_values, exp_values.map { row in row.reduce(0,+) })
-            .map { (row, sum) in row.map { value in value/sum }}
+        self.output = exp_values.map { row in row.div(row.reduce(0,+)) }
     }
 }
 
