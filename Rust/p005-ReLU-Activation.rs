@@ -9,7 +9,7 @@ fn main() {
     let mut layer1 = LayerDense::new(2, 5);
 
     layer1.forward(x);
-    let result = layer1.outputs.unwrap().map(|x| activation_relu(*x));
+    let result = activation_relu(layer1.outputs.unwrap());
     println!("{:?}", result);
 }
 
@@ -35,8 +35,8 @@ impl LayerDense {
     }
 }
 
-fn activation_relu(input: f64) -> f64 {
-    input.max(0.0)
+fn activation_relu(input: Array2<f64>) -> Array2<f64> {
+    input.map(|x| x.max(0.0))
 }
 
 type X = Array<f64, ndarray::Dim<[usize; 2]>>;
