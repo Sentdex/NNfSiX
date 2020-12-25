@@ -4,8 +4,6 @@ use ndarray::Axis;
 use ndarray_rand::RandomExt;
 use rand_distr::Normal;
 
-const E: f64 = std::f64::consts::E;
-
 fn main() {
     let (x, _y) = spiral_data(100, 3);
 
@@ -56,7 +54,7 @@ fn softmax(input: Array2<f64>) -> Array2<f64> {
                 max = *col;
             }
         }
-        let exp = in_row.map(|x| E.powf(x - max));
+        let exp = in_row.map(|x| (x - max).exp());
         let sum = exp.sum();
         out_row.assign(&(exp / sum));
     }
