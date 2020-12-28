@@ -6,15 +6,18 @@
 * as layer, activation and main (they are towards the end of the file). This implementation was 
 * originally in seperate files, so you will see the sections marked as .h and cpp, but this file is
 * completely standlone and compiles by itself.
-* 
+*
+*The part 6 bits i.e Softmax activation struct is decleared and defined after line 718 
+*
 * Link to the series on youtube: https://www.youtube.com/watch?v=Wo5dMEP_BbI&list=PLQVvvaa0QuDcjD5BAw2DxE6OF2tius3V3
 * If you want to download the seperated files: https://github.com/HippozHipos/neural-net
 */
 
 //===========================================================================================
 
-//numcpp.h 
-//Header file for all the calculations involving matries and vectors.
+//numcpp.h
+
+#pragma once
 
 #include "iostream"
 #include <vector>
@@ -22,7 +25,7 @@
 
 //Set debug to 0 to disable logging
 
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG == 1
 #define LOG(x) std::cout << x << std::endl
 #else
@@ -45,22 +48,21 @@ namespace numcpp {
 	//#                TYPES                #
 	//#######################################
 
-	//Vector -> contains a std::vector that holds a bunch of double 
-	//Its called vf becasue it used to hold floats until i realised 
-	//that a double is needed, so it really should be called Vd
-	struct Vf
+	// vector of doubles
+	template<typename T>
+	struct Vector
 	{
-		std::vector<double> v;
+		std::vector<T> v;
 
 		//fill vector with num
-		void fill(const unsigned int size, const double num)
+		void fill(const unsigned int size, const T num)
 		{
 			v.clear();
 			for (unsigned int i = 0; i < size; i++)
 				v.push_back(num);
 		}
 
-		friend std::ostream& operator << (std::ostream& out, const Vf& vec)
+		inline friend std::ostream& operator << (std::ostream& out, const Vector& vec)
 		{
 			out << "[";
 			for (unsigned int j = 0; j < vec.v.size(); j++)
@@ -74,28 +76,35 @@ namespace numcpp {
 		}
 	};
 
-	//Matrix -> contains a std::vector that holds a bunch of numcpp::Vd 
+	typedef Vector<int> Vi;
+	typedef Vector<float> Vf;
+	typedef Vector<double> Vd;
+
 	//row by column
-	struct Mf
+	//matrix of vectors
+	template<typename T>
+	struct Matrix
 	{
-		std::vector<Vf> m;
+		std::vector<T> m;
 
 		//fill matrix with num
-		void fill(unsigned const int rows, unsigned const int cols, const double num)
+		using numcpp_vector_type = typename decltype(std::declval<T>().v)::value_type;
+		void fill(unsigned const int rows, unsigned const int cols, const numcpp_vector_type num)
 		{
 			m.clear();
 			for (unsigned int i = 0; i < rows; i++)
 			{
-				Vf tempVec;
+
+				T temp_vec;
 				for (unsigned int j = 0; j < cols; j++)
 				{
-					tempVec.v.push_back(num);
+					temp_vec.v.push_back(num);
 				}
-				m.push_back(tempVec);
+				m.push_back(temp_vec);
 			}
 		}
 
-		friend std::ostream& operator << (std::ostream& out, const Mf& mat)
+		inline friend std::ostream& operator << (std::ostream& out, const Matrix& mat)
 		{
 			out << "[" << std::endl << std::endl;
 			for (unsigned int i = 0; i < mat.m.size(); i++)
@@ -114,6 +123,10 @@ namespace numcpp {
 		}
 	};
 
+	typedef Matrix<Vi> Mi;
+	typedef Matrix<Vf> Mf;
+	typedef Matrix<Vd> Md;
+
 	//#######################################
 	//#               RANDOM                #
 	//#######################################
@@ -124,23 +137,23 @@ namespace numcpp {
 		Random();
 		~Random();
 		Random(const Random&) = delete;
-		std::mt19937 _randomEngine;
+		std::mt19937 _random_engine;
 
 	public:
 		static Random& Get();
 		int Range(const int lower, const int upper);
 		double Range(const double lower, const double upper);
-		void Matrix(const unsigned int rows, const unsigned int cols, const double lower, const double upper, Mf& outmat);
-		void Vector(const unsigned int size, const double lower, const double upper, Vf& outvec);
+		void Matrix(const unsigned int rows, const unsigned int cols, const double lower, const double upper, Md& out_mat);
+		void Vector(const unsigned int size, const double lower, const double upper, Vd& out_vec);
 	};
 
-	static Random& rng = Random::Get();
+	static Random& RNG = Random::Get();
 
 	//#######################################
 	//#   UTILITY FUNCTIONS FOR VECTOR      #
 	//#######################################
 
-	inline double vectorDot(const Vf& v1, const Vf& v2)
+	inline double vector_dot(const Vd& v1, const Vd& v2)
 	{
 		if (v1.v.size() != v2.v.size())
 			throw std::exception();
@@ -153,7 +166,7 @@ namespace numcpp {
 		return total;
 	}
 
-	inline double vectoGetMax(const Vf& vec)
+	inline double vector_get_max(const Vd& vec)
 	{
 		double biggest = vec.v[0];
 		for (unsigned int i = 1; i < vec.v.size(); i++)
@@ -163,7 +176,7 @@ namespace numcpp {
 		return biggest;
 	}
 
-	inline double vectorGetMin(const Vf& vec)
+	inline double vector_get_min(const Vd& vec)
 	{
 		double smallest = vec.v[0];
 		for (unsigned int i = 1; i < vec.v.size(); i++)
@@ -173,37 +186,37 @@ namespace numcpp {
 		return smallest;
 	}
 
-	inline Vf vectorCapMax(const double value, const Vf& vec)
+	inline Vd vector_cap_max(const double value, const Vd& vec)
 	{
-		Vf tempv;
+		Vd out_vec;
 		for (unsigned int i = 0; i < vec.v.size(); i++)
 		{
-			tempv.v.push_back(MIN(value, vec.v[i]));
+			out_vec.v.push_back(MIN(value, vec.v[i]));
 		}
-		return tempv;
+		return out_vec;
 	}
 
-	inline Vf vectorCapMin(const double value, const Vf& vec)
+	inline Vd vector_cap_min(const double value, const Vd& vec)
 	{
-		Vf tempv;
+		Vd out_vec;
 		for (unsigned int i = 0; i < vec.v.size(); i++)
 		{
-			tempv.v.push_back(MAX(value, vec.v[i]));
+			out_vec.v.push_back(MAX(value, vec.v[i]));
 		}
-		return tempv;
+		return out_vec;
 	}
 
-	inline Vf vectorExp(const Vf& vec)
+	inline Vd vector_exp(const Vd& vec)
 	{
-		Vf tempv;
+		Vd out_vec;
 		for (unsigned int i = 0; i < vec.v.size(); i++)
 		{
-			tempv.v.push_back(pow(EULERS_NUMBER, vec.v[i]));
+			out_vec.v.push_back(pow(EULERS_NUMBER, vec.v[i]));
 		}
-		return tempv;
+		return out_vec;
 	}
 
-	inline double vectorSum(const Vf& vec)
+	inline double vector_sum(const Vd& vec)
 	{
 		double total = 0.0;
 		for (unsigned int i = 0; i < vec.v.size(); i++)
@@ -211,15 +224,29 @@ namespace numcpp {
 		return total;
 	}
 
-	inline Vf vectorNormalize(const Vf& vec)
+	inline Vd vector_normalize(const Vd& vec)
 	{
-		Vf tempv;
-		double total = vectorSum(vec);
+		Vd out_vec;
+		double total = vector_sum(vec);
 		for (unsigned int i = 0; i < vec.v.size(); i++)
 		{
-			tempv.v.push_back(vec.v[i] / total);
+			out_vec.v.push_back(vec.v[i] / total);
 		}
-		return tempv;
+		return out_vec;
+	}
+
+	inline double vector_mean(const Vd& vec)
+	{
+		double total = 0.0;
+		for (unsigned int i = 0; i < vec.v.size(); i++)
+			total += vec.v[i];
+		return total / vec.v.size();
+	}
+
+	inline void vector_flip_sign(Vd& vec)
+	{
+		for (unsigned int i = 0; i < vec.v.size(); i++)
+			vec.v[i] *= -1.0;
 	}
 
 	//#######################################
@@ -231,7 +258,7 @@ namespace numcpp {
 	//for a vectors to have different sizes is if they are set manually, since all the
 	//functions provided in this lib only produce rectangle shaped matrices, i.e all 
 	//vectors in the matrix are the same size
-	inline void matrixDot(const Mf& m1, const Mf& m2, Mf& outm)
+	inline void matrix_dot(const Md& m1, const Md& m2, Md& outm)
 	{
 		if (m1.m[0].v.size() && m2.m.size())
 			if (m1.m[0].v.size() != m2.m.size())
@@ -244,8 +271,8 @@ namespace numcpp {
 
 		while (outm.m.size() < m1.m.size())
 		{
-			Vf tempv;
-			while (tempv.v.size() < m2.m[0].v.size())
+			Vd temp_vec;
+			while (temp_vec.v.size() < m2.m[0].v.size())
 			{
 				double total = 0.0;
 				while (m1x < m1.m[0].v.size())
@@ -253,16 +280,17 @@ namespace numcpp {
 					total += m1.m[m1y].v[m1x] * m2.m[m1x].v[m2y];
 					m1x++;
 				}
-				tempv.v.push_back(total);
+				temp_vec.v.push_back(total);
 				m1x = 0;
 				m2y < m2.m[0].v.size() - 1 ? m2y++ : m2y = 0;
 			}
 			m1y < m1.m.size() - 1 ? m1y++ : m1y = 0;
-			outm.m.push_back(tempv);
+			outm.m.push_back(temp_vec);
 		}
 	}
 
-	inline void matrixAdd(Mf& mat, const Vf& vec)
+	//assumes that all the vectors in the matrix will be the same size
+	inline void matrix_add(Md& mat, const Vd& vec)
 	{
 		if (mat.m[0].v.size() != vec.v.size())
 		{
@@ -278,53 +306,53 @@ namespace numcpp {
 
 	}
 
-	//value < lower ? lower : value 
-	//cap values at lower
+	//value less than lower, than lower otherwise value (cap values at lower)
 	//used for rectified linear activation function in hidden layer
-	inline Mf matrixCapMin(const double value, const Mf& inmat)
+	inline Md matrix_cap_min(const double value, const Md& inmat)
 	{
-		Mf outmat;
+		Md out_mat;
 		for (unsigned int i = 0; i < inmat.m.size(); i++)
 		{
-			Vf tempv;
+			Vd temp_vec;
 			for (unsigned int j = 0; j < inmat.m[i].v.size(); j++)
 			{
-				tempv.v.push_back(MAX(value, inmat.m[i].v[j]));
+				temp_vec.v.push_back(MAX(value, inmat.m[i].v[j]));
 			}
-			outmat.m.push_back(tempv);
+			out_mat.m.push_back(temp_vec);
 		}
-		return outmat;
+		return out_mat;
 	}
 
 	//caps max value in matrix at value
-	inline Mf matrixCapMax(const double value, const Mf& inmat)
+	inline Md matrix_cap_max(const double value, const Md& inmat)
 	{
-		Mf outmat;
+		Md out_mat;
 		for (unsigned int i = 0; i < inmat.m.size(); i++)
 		{
-			Vf tempv;
+			Vd temp_vec;
 			for (unsigned int j = 0; j < inmat.m[i].v.size(); j++)
 			{
-				tempv.v.push_back(MIN(value, inmat.m[i].v[j]));
+				temp_vec.v.push_back(MIN(value, inmat.m[i].v[j]));
 			}
-			outmat.m.push_back(tempv);
+			out_mat.m.push_back(temp_vec);
 		}
-		return outmat;
+		return out_mat;
 	}
 
-	//axis 0 = columns, axis 1 = rows
-	inline Vf matrixGetMaxInAxis(const Mf& mat, const int axis)
+	//axis = 0 means max value in each row
+	//axis = 1 means max value in each column
+	inline Vd matrix_max_in_axis(const Md& mat, const int axis)
 	{
-		Vf tempv;
+		Vd out_vec;
 
 		if (axis == 0)
 		{
 			for (unsigned int i = 0; i < mat.m[0].v.size(); i++)
 			{
-				tempv.v.push_back(mat.m[0].v[i]);
+				out_vec.v.push_back(mat.m[0].v[i]);
 				for (unsigned int j = 1; j < mat.m.size(); j++)
 				{
-					tempv.v[i] = MAX(mat.m[j].v[i], tempv.v[i]);
+					out_vec.v[i] = MAX(mat.m[j].v[i], out_vec.v[i]);
 				}
 			}
 		}
@@ -332,10 +360,10 @@ namespace numcpp {
 		{
 			for (unsigned int i = 0; i < mat.m.size(); i++)
 			{
-				tempv.v.push_back(mat.m[i].v[0]);
+				out_vec.v.push_back(mat.m[i].v[0]);
 				for (unsigned int j = 1; j < mat.m[i].v.size(); j++)
 				{
-					tempv.v[i] = MAX(mat.m[i].v[j], tempv.v[i]);
+					out_vec.v[i] = MAX(mat.m[i].v[j], out_vec.v[i]);
 				}
 			}
 		}
@@ -345,11 +373,11 @@ namespace numcpp {
 			throw std::exception();
 		}
 
-		return tempv;
+		return out_vec;
 	}
 
 	//returns biggest value from whole of the matrix
-	inline double matrixGetMax(const Mf& mat)
+	inline double matrix_max(const Md& mat)
 	{
 		double biggest = mat.m[0].v[0];
 		for (unsigned int i = 0; i < mat.m.size(); i++)
@@ -361,63 +389,63 @@ namespace numcpp {
 	}
 
 	//exponentiate all the elements
-	inline Mf matrixExp(const Mf& mat)
+	inline Md matrix_exp(const Md& mat)
 	{
-		Mf outmat;
+		Md out_mat;
 		for (unsigned int i = 0; i < mat.m.size(); i++)
 		{
-			Vf tempv;
+			Vd temp_vec;
 			for (unsigned int j = 0; j < mat.m[i].v.size(); j++)
 			{
-				tempv.v.push_back(pow(EULERS_NUMBER, mat.m[i].v[j]));
+				temp_vec.v.push_back(pow(EULERS_NUMBER, mat.m[i].v[j]));
 			}
-			outmat.m.push_back(tempv);
+			out_mat.m.push_back(temp_vec);
 		}
-		return outmat;
+		return out_mat;
 	}
 
 	//minus value from all the elements
-	inline Mf matrixMinus(const double value, const Mf& mat)
+	inline Md matrix_minus(const double value, const Md& mat)
 	{
-		Mf outmat;
+		Md out_mat;
 		for (unsigned int i = 0; i < mat.m.size(); i++)
 		{
-			Vf tempv;
+			Vd temp_vec;
 			for (unsigned int j = 0; j < mat.m[i].v.size(); j++)
 			{
-				tempv.v.push_back(mat.m[i].v[j] - value);
+				temp_vec.v.push_back(mat.m[i].v[j] - value);
 			}
-			outmat.m.push_back(tempv);
+			out_mat.m.push_back(temp_vec);
 		}
-		return outmat;
+		return out_mat;
 	}
 
 
-	//axis 0 = columns, axis 1 = rows
-	inline Mf matrixMinusMaxInAxis(const Mf& mat, const int axis)
+	// 0 = rows, 1 = columns
+	inline Md matrix_minus_in_axis(const Md& mat, const int axis)
 	{
-		Mf outmat;
+		Md out_mat;
 		if (axis == 0)
 		{
-			outmat = mat;
-			Vf max = matrixGetMaxInAxis(mat, 0);
+			out_mat = mat;
+			Vd max = matrix_max_in_axis(mat, 0);
 			for (unsigned int i = 0; i < mat.m[0].v.size(); i++)
 				for (unsigned int j = 0; j < mat.m.size(); j++)
 				{
-					outmat.m[j].v[i] = mat.m[j].v[i] - max.v[i];
+					out_mat.m[j].v[i] = mat.m[j].v[i] - max.v[i];
 				}
 		}
 		else if (axis == 1)
 		{
-			Vf max = matrixGetMaxInAxis(mat, 1);
+			Vd max = matrix_max_in_axis(mat, 1);
 			for (unsigned int i = 0; i < mat.m.size(); i++)
 			{
-				Vf tempv;
+				Vd temp_vec;
 				for (unsigned int j = 0; j < mat.m[i].v.size(); j++)
 				{
-					tempv.v.push_back(mat.m[i].v[j] - max.v[i]);
+					temp_vec.v.push_back(mat.m[i].v[j] - max.v[i]);
 				}
-				outmat.m.push_back(tempv);
+				out_mat.m.push_back(temp_vec);
 			}
 		}
 		else
@@ -425,31 +453,32 @@ namespace numcpp {
 			LOG("axis must be either 0 or 1. Provided was: " << axis);
 			throw std::exception();
 		}
-		return outmat;
+		return out_mat;
 	}
 
-	//axis 0 = columns, axis 1 = rows
-	inline Vf matrixSumInAxis(const Mf& mat, const int axis)
+	//axis 0 means rows are summed 
+	//axis 1 means that columns 
+	inline Vd matrix_sum_in_axis(const Md& mat, const int axis)
 	{
-		Vf tempv;
+		Vd out_vec;
 
 		if (axis == 0)
 		{
-			for (unsigned int i = 0; i < mat.m.size(); i++)
+			for (unsigned int i = 0; i < mat.m[0].v.size(); i++)
 			{
-				double total = 0.0;
-				for (unsigned int j = 0; j < mat.m[0].v.size(); j++)
+				double _total = 0.0;
+				for (unsigned int j = 0; j < mat.m.size(); j++)
 				{
-					total += mat.m[i].v[j];
+					_total += mat.m[j].v[i];
 				}
-				tempv.v.push_back(total);
+				out_vec.v.push_back(_total);
 			}
 		}
 		else if (axis == 1)
 		{
 			for (unsigned int i = 0; i < mat.m.size(); i++)
 			{
-				tempv.v.push_back(vectorSum(mat.m[i]));
+				out_vec.v.push_back(vector_sum(mat.m[i]));
 			}
 		}
 		else
@@ -457,40 +486,44 @@ namespace numcpp {
 			LOG("axis must be either 0 or 1. Provided was: " << axis);
 			throw std::exception();
 		}
-		return tempv;
+		return out_vec;
 	}
 
-	//axis 0 = columns, axis 1 = rows
-	inline Mf matrixNormalizeInAxis(const Mf& mat, int axis)
+	/*axis 0 means rows are summed to normalize
+	axis 1 means that columns are summed to normalize*/
+	inline Md matrix_normalize_in_axis(const Md& mat, int axis)
 	{
-		Mf outmat;
+		Md out_mat;
 		if (axis == 0)
 		{
-			Vf _tempv = matrixSumInAxis(mat, 0);
-			Vf tempv;
+			Vd _temp_vec = matrix_sum_in_axis(mat, 0);
+			Vd temp_vec;
 			for (unsigned int i = 0; i < mat.m.size(); i++)
 			{
 				for (unsigned int j = 0; j < mat.m[i].v.size(); j++)
 				{
-					tempv.v.push_back(mat.m[i].v[j] / _tempv.v[j]);
+					if (_temp_vec.v[j] != 0)
+						temp_vec.v.push_back(mat.m[i].v[j] / _temp_vec.v[j]);
+					else
+						temp_vec.v.push_back(1.0 / mat.m.size());
 				}
-				outmat.m.push_back(tempv);
+				out_mat.m.push_back(temp_vec);
 			}
 		}
 		else if (axis == 1)
 		{
 			for (unsigned int i = 0; i < mat.m.size(); i++)
 			{
-				Vf tempv;
-				double total = vectorSum(mat.m[i]);
+				Vd temp_vec;
+				double total = vector_sum(mat.m[i]);
 				for (unsigned int j = 0; j < mat.m[i].v.size(); j++)
 				{
 					if (total != 0)
-						tempv.v.push_back(mat.m[i].v[j] / total);
+						temp_vec.v.push_back(mat.m[i].v[j] / total);
 					else
-						tempv.v.push_back(1.0 / mat.m[i].v.size());
+						temp_vec.v.push_back(1.0 / mat.m[i].v.size());
 				}
-				outmat.m.push_back(tempv);
+				out_mat.m.push_back(temp_vec);
 			}
 		}
 		else
@@ -498,10 +531,70 @@ namespace numcpp {
 			LOG("axis must be either 0 or 1. Provided was: " << axis);
 			throw std::exception();
 		}
-		return outmat;
+		return out_mat;
 	}
 
+	// 0 = rows, 1 = columns
+	inline Vd matrix_mean_in_axis(const Md& mat, const int axis)
+	{
+		Vd out_vec;
+		if (axis == 0)
+		{
+			for (unsigned int i = 0; i < mat.m[0].v.size(); i++)
+			{
+				double _total = 0.0;
+				for (unsigned int j = 0; j < mat.m.size(); j++)
+				{
+					_total += mat.m[j].v[i];
+				}
+				out_vec.v.push_back(_total / mat.m.size());
+			}
+		}
+		else if (axis == 1)
+		{
+			for (unsigned int i = 0; i < mat.m.size(); i++)
+				out_vec.v.push_back(vector_mean(mat.m[i]));
+		}
+		else
+		{
+			LOG("axis must be either 0 or 1. Provided was: " << axis);
+			throw std::exception();
+		}
+		return out_vec;
+	}
+
+	inline Md matrix_log(const Md& mat)
+	{
+		Md out_mat;
+		for (unsigned int i = 0; i < mat.m.size(); i++)
+		{
+			Vd temp_vec;
+			for (unsigned int j = 0; j < mat.m[i].v.size(); j++)
+			{
+				temp_vec.v.push_back(log(mat.m[i].v[j]));
+			}
+			out_mat.m.push_back(temp_vec);
+		}
+		return out_mat;
+	}
+
+	inline void matrix_flip_sign(Md& mat)
+	{
+		for (unsigned int i = 0; i < mat.m.size(); i++)
+			vector_flip_sign(mat.m[i]);
+	}
+
+	//takes a vector of indices and returns a vector of elements
+	//at those indices along the matrix. 
+	inline Vd matrix_item_at_index(const Md& mat, const int indices[])
+	{
+		Vd temp_vec;
+		for (unsigned int i = 0; i < mat.m.size(); i++)
+			temp_vec.v.push_back(mat.m[i].v[indices[i]]);
+		return temp_vec;
+	}
 }
+
 
 //===============================================================================================
 
@@ -516,17 +609,18 @@ namespace numcpp {
 
 
 	// To make generate the same set of random numbers (for debugging)
-	//comment out: std::mt19937 randomEngine(randomSeed());
-	//uncomment: std::mt19937 randomEngine(3);
+	//comment out: std::mt19937 random_engine(random_seed());
+	//uncomment: std::mt19937 random_engine(3);
 	Random::Random()
 	{
-		std::random_device randomSeed;
-		//std::mt19937 randomEngine(3);
-		std::mt19937 randomEngine(randomSeed());
-		_randomEngine = randomEngine;
+		std::random_device random_seed;
+		std::mt19937 random_engine(3);
+		//std::mt19937 random_engine(random_seed());
+		_random_engine = random_engine;
 	};
 
 	Random::~Random() {};
+
 
 	Random& Random::Get()
 	{
@@ -537,50 +631,50 @@ namespace numcpp {
 	int Random::Range(const int lower, const int upper)
 	{
 		std::uniform_int_distribution<int> distribution(lower, upper);
-		return distribution(_randomEngine);
+		return distribution(_random_engine);
 	}
 
 	double Random::Range(const double lower, const double upper)
 	{
 		std::uniform_real_distribution<double> distribution(lower, upper);
-		return distribution(_randomEngine);
+		return distribution(_random_engine);
 	}
 
-	void Random::Matrix(const unsigned int rows, const unsigned int cols, const double lower, const double upper, Mf& outmat)
+	void Random::Matrix(const unsigned int rows, const unsigned int cols, const double lower, const double upper, Md& out_mat)
 	{
 		for (unsigned int i = 0; i < rows; i++)
 		{
-			Vf tempVec;
+			Vd temp_vec;
 			for (unsigned int j = 0; j < cols; j++)
 			{
-				tempVec.v.push_back(Range(lower, upper));
+				temp_vec.v.push_back(Range(lower, upper));
 			}
-			outmat.m.push_back(tempVec);
+			out_mat.m.push_back(temp_vec);
 		}
 	}
 
-	void Random::Vector(const unsigned int size, const double lower, const double upper, Vf& outvec)
+	void Random::Vector(const unsigned int size, const double lower, const double upper, Vd& out_vec)
 	{
 		for (unsigned int i = 0; i < size; i++)
-			outvec.v.push_back(Range(lower, upper));
+			out_vec.v.push_back(Range(lower, upper));
 	}
 }
 
 //==============================================================================================
 
 //layer.h
-
 namespace neural_net {
 
 	struct LayerDense
 	{
-		numcpp::Mf weights;
-		numcpp::Mf output;
-		numcpp::Vf biases;
+		numcpp::Md weights;
+		numcpp::Md output;
+		numcpp::Vd biases;
 		LayerDense(const int nInputs, const int nNeurons, double bias = 0.0);
 		~LayerDense();
-		void forward(const numcpp::Mf& inputs);
+		void Forward(const numcpp::Md& inputs);
 	};
+
 }
 
 //================================================================================================
@@ -591,7 +685,7 @@ namespace neural_net {
 
 	LayerDense::LayerDense(const int nInputs, const int nNeurons, double bias)
 	{
-		numcpp::rng.Matrix(nInputs, nNeurons, 0.0, 1.0, weights);
+		numcpp::RNG.Matrix(nInputs, nNeurons, 0.0, 1.0, weights);
 		LOG("(dense layer init) initialized with matrix: " << std::endl << weights);
 		biases.fill(nNeurons, bias);
 		LOG("(dense layer init) Filled Biases vector with a bias value of: " << bias << std::endl);
@@ -599,11 +693,11 @@ namespace neural_net {
 
 	LayerDense::~LayerDense() {};
 
-	void LayerDense::forward(const numcpp::Mf& inputs)
+	void LayerDense::Forward(const numcpp::Md& inputs)
 	{
-		numcpp::matrixDot(inputs, weights, output);
+		numcpp::matrix_dot(inputs, weights, output);
 		LOG(" (dense layer forward) inputs * weights in forward method of dense layer. output: " << std::endl << output);
-		numcpp::matrixAdd(output, biases);
+		numcpp::matrix_add(output, biases);
 		LOG("(dense layer forward) biases added to output matrix from dot product of weights and input: " << std::endl << output);
 	}
 
@@ -617,21 +711,20 @@ namespace neural_net {
 
 	struct ActivationReLU
 	{
-		numcpp::Mf output;
+		numcpp::Md output;
 		ActivationReLU();
 		~ActivationReLU();
-		void forward(const numcpp::Mf& input);
+		void Forward(const numcpp::Md& input);
 	};
 
 	struct ActivationSoftmax
 	{
-		numcpp::Mf output;
+		numcpp::Md output;
 		ActivationSoftmax();
-		void forward(const numcpp::Mf& input);
+		void Forward(const numcpp::Md& input);
 	};
 
 }
-
 //===========================================================================
 
 //activation.cpp
@@ -642,22 +735,22 @@ namespace neural_net {
 
 	ActivationReLU::~ActivationReLU() {};
 
-	void ActivationReLU::forward(const numcpp::Mf& input)
+	void ActivationReLU::Forward(const numcpp::Md& input)
 	{
-		output = numcpp::matrixCapMin(0.0, input);
+		output = numcpp::matrix_cap_min(0.0, input);
 		LOG("(ReLU forward) forward pass. matrix capped at min value of 0. output: " << std::endl << output);
 	}
 
 
 	ActivationSoftmax::ActivationSoftmax() {};
 
-	void ActivationSoftmax::forward(const numcpp::Mf& input)
+	void ActivationSoftmax::Forward(const numcpp::Md& input)
 	{
-		numcpp::Mf negated = numcpp::matrixMinusMaxInAxis(input, 1);
+		numcpp::Md negated = numcpp::matrix_minus_in_axis(input, 1);
 		LOG("(softmax forward) input matrix's highest value negated from all the elements in matrix. output: " << std::endl << negated);
-		numcpp::Mf exp = numcpp::matrixExp(negated);
+		numcpp::Md exp = numcpp::matrix_exp(negated);
 		LOG("(softmax forward) all the elements in the negated matrix exponentiated. output: " << std::endl << exp);
-		output = numcpp::matrixNormalizeInAxis(exp, 1);
+		output = numcpp::matrix_normalize_in_axis(exp, 1);
 		LOG("(softmax forward) exponentiated matrix is normalized. output: " << std::endl << output);
 	}
 
@@ -677,13 +770,13 @@ int main()
 	std::cout.precision(10);
 
 	//create a matrix 
-	numcpp::Mf X;
+	numcpp::Md X;
 
 	//all the matrices size will be 3x3 to make it easier to test things.
 	const int nMatSize = 3;
 
 	//fill X will random numbers between -1.0 and 1.0. This is the actual input.  
-	numcpp::rng.Matrix(nMatSize, nMatSize, -1.0, 1.0, X);
+	numcpp::RNG.Matrix(nMatSize, nMatSize, -1.0, 1.0, X);
 
 	//initilaize dense layer1 of size nMatSize x nMatSize
 	neural_net::LayerDense layer1 = neural_net::LayerDense(nMatSize, nMatSize);
@@ -691,9 +784,9 @@ int main()
 	neural_net::ActivationReLU ReLU1;
 
 	//forward pass of layer 1.
-	layer1.forward(X);
+	layer1.Forward(X);
 	//output of layer 1 is passed to ReLU as input.
-	ReLU1.forward(layer1.output);
+	ReLU1.Forward(layer1.output);
 
 	//initilaize dense layer2 of size nMatSize x nMatSize. This is an output layer.
 	neural_net::LayerDense layerOut = neural_net::LayerDense(nMatSize, nMatSize);
@@ -701,7 +794,7 @@ int main()
 	neural_net::ActivationSoftmax softmax;
 
 	//output of ReLU1 is passed to the output layer as input.
-	layerOut.forward(ReLU1.output);
+	layerOut.Forward(ReLU1.output);
 	//output of output layer is passed through the softmax activation function.
-	softmax.forward(layerOut.output);
+	softmax.Forward(layerOut.output);
 }
