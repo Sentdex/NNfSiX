@@ -76,13 +76,8 @@ double rand_range(double min, double max)
  * @param[in]   	layer   		Pointer to an empty layer with no values.
  * @param[in]   	intput_size  	size of the input layer.
  * @param[in]   	output_size	 	size of the output layer.
- * @param[in]   	batch_size  	number of batches.
  */
-void layer_init(layer_dense_t *layer,int intput_size,int output_size, int batch_size){
-	
-	if(batch_size < 1){
-		printf("batch_size must be grater than 0\n");
-	}
+void layer_init(layer_dense_t *layer,int intput_size,int output_size){
 
     layer->input_size = intput_size;
     layer->output_size = output_size;
@@ -98,7 +93,7 @@ void layer_init(layer_dense_t *layer,int intput_size,int output_size, int batch_
         printf("biase mem error\n");
         return;
     }
-    layer->output = malloc(sizeof(double) * output_size * batch_size);
+    layer->output = malloc(sizeof(double) * output_size);
 
     if(layer->output == NULL){
         printf("output mem error\n");
@@ -107,7 +102,7 @@ void layer_init(layer_dense_t *layer,int intput_size,int output_size, int batch_
 
     int i = 0;
     for(i = 0; i < (output_size); i++){
-           layer->biase[i] = INIT_biasES;
+           layer->biase[i] = INIT_BIASES;
     }
     for(i = 0; i < (intput_size*output_size); i++){
            layer->weights[i] = rand_range(RAND_MIN_RANGE,RAND_HIGH_RANGE);
@@ -131,12 +126,9 @@ void deloc_layer(layer_dense_t *layer){
  *
  * @param[in]   	previos_layer   		Pointer the previos layer struct.
  * @param[in]   	next_layer  			Pointer the next layer struct.
- * @param[in]   	batch_index  			current batch index.
  */
-void forward(layer_dense_t *previos_layer,layer_dense_t *next_layer, int batch_index){
-    int offset = next_layer->output_size * batch_index;
-    int input_offset = next_layer->input_size * batch_index;
-    layer_output((previos_layer->output + input_offset),next_layer->weights,next_layer->biase,next_layer->input_size,(next_layer->output + offset),next_layer->output_size);
+void forward(layer_dense_t *previos_layer,layer_dense_t *next_layer){
+    layer_output((previos_layer->output),next_layer->weights,next_layer->biase,next_layer->input_size,(next_layer->output),next_layer->output_size);
 }
 
 
@@ -148,7 +140,6 @@ int main()
 
     int i = 0;
     int j = 0;
-    int offset = 0;
     layer_dense_t X;
     layer_dense_t layer1;
     layer_dense_t layer2;
@@ -158,42 +149,28 @@ int main()
         {-1.5,2.7,3.3,-0.8}
     };
 
-    X.output = &X_input[0][0];
 
-
-    layer_init(&layer1,NET_INPUT_LAYER_1_SIZE,NET_HIDDEN_LAYER_2_SIZE,NET_BATCH_SIZE);
-    layer_init(&layer2,NET_HIDDEN_LAYER_2_SIZE,NET_OUTPUT_LAYER_SIZE,NET_BATCH_SIZE);
+    layer_init(&layer1,NET_INPUT_LAYER_1_SIZE,NET_HIDDEN_LAYER_2_SIZE);
+    layer_init(&layer2,NET_HIDDEN_LAYER_2_SIZE,NET_OUTPUT_LAYER_SIZE);
 
     for(i = 0; i < NET_BATCH_SIZE;i++){
-        forward(&X,&layer1,i);
-    }
+        X.output = &X_input[i][0];
 
-    offset = 0;
-    for(i = 0; i < NET_BATCH_SIZE;i++){
-        printf("batch: %d layer1_output: ",i);
-        for(j = 0; j < layer1.output_size; j++){
-            printf("%f ",(layer1.output + offset)[j]);
-        }
-        offset += layer1.output_size;
-            printf("\n");
-    }
-    printf("\n");
+        forward(&X,&layer1);
 
+        //printf("batch: %d layerX_output: ",i);
+        //for(j = 0; j < layer1.output_size; j++){
+        //    printf("%f ",layer1.output[j]);
+        //}
+        //printf("\n");
 
-    for(i = 0; i < NET_BATCH_SIZE;i++){
-        forward(&layer1,&layer2,i);
-    }
-
-    offset = 0;
-    for(i = 0; i < NET_BATCH_SIZE;i++){
-        printf("batch: %d layer2_output: ",i);
+        forward(&layer1,&layer2);
+        printf("batch: %d layerY_output: ",i);
         for(j = 0; j < layer2.output_size; j++){
-            printf("%f ",(layer2.output + offset)[j]);
+            printf("%f ",layer2.output[j]);
         }
-        offset += layer2.output_size;
-            printf("\n");
+        printf("\n");
     }
-    printf("\n");
 
 
     deloc_layer(&layer1);
@@ -203,9 +180,10 @@ int main()
 }
 
 
-/* test main not using random numbers
-
-int main()
+/* test main not using random numbers*/
+/*
+//#define NET_HIDDEN_LAYER_2_SIZE 4 // can be replaced with (sizeof(var)/sizeof(double))
+int main(){
 
     //seed the random values
     srand (time(NULL));
@@ -214,7 +192,7 @@ int main()
     int j = 0;
     int k = 0;
     int offset = 0;
-    layer_dense_t X[NET_BATCH_SIZE];
+    layer_dense_t X;
     layer_dense_t layer1;
     layer_dense_t layer2;
     double X_input[NET_BATCH_SIZE][NET_INPUT_LAYER_1_SIZE] = {
@@ -222,7 +200,7 @@ int main()
         {2.0,5.0,-1.0,2.0},
         {-1.5,2.7,3.3,-0.8}
     };
-    double weights[NET_HIDDEN_LAYER_2_SIZE][NET_INPUT_LAYER_1_SIZE] = {
+    double weights[NET_BATCH_SIZE][NET_INPUT_LAYER_1_SIZE] = {
                                                                 {0.2, 0.8, -0.5, 1.0},
                                                                 {0.5, -0.91, 0.26, -0.5},
                                                                 {-0.26, -0.27, 0.17, 0.87},
@@ -230,7 +208,7 @@ int main()
     double bias[NET_HIDDEN_LAYER_2_SIZE] = {2.0,3.0,0.5};
 
 
-    double layer1_output[NET_BATCH_SIZE][NET_HIDDEN_LAYER_2_SIZE];
+    double layer1_output[NET_HIDDEN_LAYER_2_SIZE];
 
     double weights2[NET_OUTPUT_LAYER_SIZE][NET_HIDDEN_LAYER_2_SIZE] = {
                                                                 {0.1, -0.14, 0.5},
@@ -239,12 +217,10 @@ int main()
                                                                 };
     double bias2[NET_OUTPUT_LAYER_SIZE] = {-1.0,2.0,-0.5};
 
-    double layer2_output[NET_BATCH_SIZE][NET_OUTPUT_LAYER_SIZE];
+    double layer2_output[NET_OUTPUT_LAYER_SIZE];
 
 
-    for(i = 0; i < NET_BATCH_SIZE;i++){
-        X[i].output = &X_input[i][0];
-    }
+
 
     layer1.weights = weights;
     layer1.biase = bias;
@@ -259,39 +235,24 @@ int main()
     layer2.output_size = NET_OUTPUT_LAYER_SIZE;
     layer2.output = layer2_output;
 
-
     for(i = 0; i < NET_BATCH_SIZE;i++){
-        forward(&X,&layer1,i);
-    }
+        X.output = &X_input[i][0];
 
-    offset = 0;
-    for(i = 0; i < NET_BATCH_SIZE;i++){
-        printf("batch: %d layerx_output: ",i);
-        for(j = 0; j < layer1.output_size; j++){
-            printf("%f ",(layer1.output + offset)[j]);
-        }
-        offset += layer1.output_size;
-            printf("\n");
-    }
-    printf("\n");
+        forward(&X,&layer1);
 
+        //printf("batch: %d layerX_output: ",i);
+        //for(j = 0; j < layer1.output_size; j++){
+        //    printf("%f ",layer1.output[j]);
+        //}
+        //printf("\n");
 
-    for(i = 0; i < NET_BATCH_SIZE;i++){
-        forward(&layer1,&layer2,i);
-    }
-
-    offset = 0;
-    for(i = 0; i < NET_BATCH_SIZE;i++){
-        printf("batch: %d layerx_output: ",i);
+        forward(&layer1,&layer2);
+        printf("batch: %d layerY_output: ",i);
         for(j = 0; j < layer2.output_size; j++){
-            printf("%f ",(layer2.output + offset)[j]);
+            printf("%f ",layer2.output[j]);
         }
-        offset += layer2.output_size;
-            printf("\n");
+        printf("\n");
     }
-    printf("\n");
 
 }
-
-
 */
