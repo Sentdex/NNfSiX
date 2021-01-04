@@ -24,7 +24,7 @@ typedef struct{
     double *output;     /*output of the neural layer*/
     int input_size;     /*size of the input layer*/
     int output_size;    /*size of the output layer*/
-	actiavtion_callback callback; /* pionter to the callbacb used for the activation function */
+	actiavtion_callback callback; /* pointer to the callback used for the activation function */
 }layer_dense_t;
 
 /** Forward decleration the spiral data. Don't want to scroll 300 lines to get to the code
