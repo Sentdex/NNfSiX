@@ -85,7 +85,7 @@ double rand_range(double min, double max)
 }
 
 
-/**@brief Setup a layer with random weights and bais as well as allocating memory for the storage buffers.
+/**@brief Setup a layer with random weights and bias as well as allocating memory for the storage buffers.
  *
  * @param[in]   	layer   		Pointer to an empty layer with no values.
  * @param[in]   	intput_size  	size of the input layer.
