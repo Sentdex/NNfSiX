@@ -13,8 +13,8 @@
  * @param[in]   input   	Pointer to the first address of the inputs.
  * @param[in]   weights  	Pointer to the first address of the weights.
  * @param[in]   bias	 	Pointer to the value of the neurons bias.
- * @param[in]   input_size  number of neurons in the input layer.
- * @retval[out] output		the dot product of the neuron.
+ * @param[in]   input_size  Number of neurons in the input layer.
+ * @retval[out] output		The dot product of the neuron.
  */
 
 double dot_product(double *input,double *weights,double *bias,int input_size){
@@ -32,9 +32,9 @@ double dot_product(double *input,double *weights,double *bias,int input_size){
  * @param[in]   	input   		Pointer to the first address of the inputs.
  * @param[in]   	weights  		Pointer to the first address of the weights.
  * @param[in]   	bias	 		Pointer to the first address of the neuron bases.
- * @param[in]   	input_size  	number of neurons in the input layer.
+ * @param[in]   	input_size  	Number of neurons in the input layer.
  * @param[in/out]   outputs  		Pointer to the first address of the outputs array.
- * @param[in]   	output_size  	number of neurons in the output layer.
+ * @param[in]   	output_size  	Number of neurons in the output layer.
  */
 
 void layer_output(double *input,double *weights,double *bias,int input_size,double *outputs,int output_size){
