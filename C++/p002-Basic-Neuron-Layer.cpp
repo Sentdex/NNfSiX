@@ -4,14 +4,15 @@
  * Associated YT NNFS tutorial: https://www.youtube.com/watch?v=lGLto9Xd7bU
  */
 
+#include <array>
 #include <iostream>
 
 int main() {
-	double inputs[] = {1.0, 2.0, 3.0, 2.5};
+	std::array<double, 4> inputs = {1.0, 2.0, 3.0, 2.5};
 
-	double weights1[] = {0.2, 0.8, -0.5, 1.0};
-	double weights2[] = {0.5, -0.91, 0.26, -0.5};
-	double weights3[] = {-0.26, -0.27, 0.17, 0.87};
+	std::array<double, 4> weights1 = {0.2, 0.8, -0.5, 1.0};
+	std::array<double, 4> weights2 = {0.5, -0.91, 0.26, -0.5};
+	std::array<double, 4> weights3 = {-0.26, -0.27, 0.17, 0.87};
 
 	double bias1 = 2.0;
 	double bias2 = 3.0;
