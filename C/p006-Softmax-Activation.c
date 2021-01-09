@@ -161,12 +161,6 @@ double activation_ReLU(double x){
     return x;
 }
 
-
-//Euler's exponential activation function
-double activation_exponential(double x){
-    return exp(x);
-}
-
 /**@brief Callback to apply a activation function to the output of a node.
  *
  * @param[in]   output   	Pointer to the dot product output.
@@ -174,14 +168,6 @@ double activation_exponential(double x){
 void actiavtion1(double *output){
     *output = activation_ReLU(*output);
     //*output = sigmoid(*output);
-}
-
-/**@brief Callback to apply a activation function to the output of a node.
- *
- * @param[in]   output   	Pointer to the dot product output.
- */
-void actiavtion2(double *output){
-   *output = activation_exponential(*output);
 }
 
 /**@brief Generate a randome range in a uniform distribution.
@@ -265,14 +251,25 @@ void deloc_spiral(spiral_data_t *data){
  *
  * @note C can not do inline summation of arrays. This can only be done after a forward pass has been done.
  *
- * @param[in]   	output_layer   		Pointer the output layer struct.
+ * @param[in/out]   	output_layer   		Pointer the output layer struct.
  */
 void activation_softmax(layer_dense_t *output_layer){
     double sum = 0.0;
+    double maxu = 0.0;
     int i = 0;
 
+
+    maxu = output_layer->output[0];
+    for(i = 1; i < output_layer->output_size;i++){
+        if(output_layer->output[i] > maxu){
+            maxu = output_layer->output[i];
+        }
+    }
+
     for(i = 0; i < output_layer->output_size;i++){
+        output_layer->output[i] = exp(output_layer->output[i] - maxu);
         sum += output_layer->output[i];
+
     }
 
     for(i = 0; i < output_layer->output_size;i++){
@@ -307,8 +304,8 @@ int main()
     int j = 0;
     spiral_data_t X_data;
     layer_dense_t X;
-    layer_dense_t layer1;
-    layer_dense_t layer2;
+    layer_dense_t dense1;
+    layer_dense_t dense2;
 
 
     spiral_data(100,3,&X_data);
@@ -318,45 +315,45 @@ int main()
     }
 
     X.callback = NULL;
-    layer1.callback = actiavtion1;
 
-    //Apply Euler's exponential to each output value
-    layer2.callback = actiavtion2;
+    dense1 .callback = actiavtion1;
 
-    layer_init(&layer1,NET_INPUT_LAYER_1_SIZE,NET_INPUT_LAYER_2_SIZE);
-    layer_init(&layer2,NET_INPUT_LAYER_2_SIZE,NET_OUTPUT_LAYER_SIZE);
+    dense2.callback = NULL;
+
+    layer_init(&dense1 ,NET_INPUT_LAYER_1_SIZE,NET_INPUT_LAYER_2_SIZE);
+    layer_init(&dense2,NET_INPUT_LAYER_2_SIZE,NET_OUTPUT_LAYER_SIZE);
 
     for(i = 0; i < NET_BATCH_SIZE;i++){
         X.output = &X_data.x[i*2];
-        forward(&X,&layer1);
+        forward(&X,&dense1);
        /* printf("batch: %d layer1_output: ",i);
-        for(j = 0; j < layer1.output_size; j++){
-            printf("%f ",layer1.output[j]);
+        for(j = 0; j < dense1 .output_size; j++){
+            printf("%f ",dense1 .output[j]);
         }*/
-        forward(&layer1,&layer2);
+        forward(&dense1,&dense2);
 
         /*printf("batch: %d layer2_output: ",i);
-        for(j = 0; j < layer2.output_size; j++){
-            printf("%f ",layer2.output[j]);
+        for(j = 0; j < dense2.output_size; j++){
+            printf("%f ",dense2.output[j]);
         }
         printf("\n");*/
 
 
-        activation_softmax(&layer2);
+        activation_softmax(&dense2);
 
         printf("batch: %d layer2_softmax: ",i);
-        for(j = 0; j < layer2.output_size; j++){
-            printf("%f ",layer2.output[j]);
+        for(j = 0; j < dense2.output_size; j++){
+            printf("%f ",dense2.output[j]);
         }
         printf("\n");
-        //printf("batch: %d layer2_normalize_sum: %f\n",i,sum_softmax_layer_output(&layer2));
+        //printf("batch: %d layer2_normalize_sum: %f\n",i,sum_softmax_layer_output(&dense2));
 
 
 
     }
 
-    deloc_layer(&layer1);
-    deloc_layer(&layer2);
+    deloc_layer(&dense1);
+    deloc_layer(&dense2);
     deloc_spiral(&X_data);
     return 0;
 }
