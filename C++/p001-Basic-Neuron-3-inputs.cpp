@@ -8,14 +8,13 @@
 #include <iostream>
 
 int main() {
-    std::array<double, 3> inputs = {1.0, 2.0, 3.0};
-    std::array<double, 3> weights = {3.1, 2.1, 8.7};
-    double bias = 3.0;
+    std::array<double, 3> inputs = { +1.00, +2.00, +3.00 };
 
-    double output = inputs[0] * weights[0] +
-                    inputs[1] * weights[1] + 
-                    inputs[2] * weights[2] + 
-                    bias;
+    std::array<double, 3> weights = { +3.10, +2.10, +8.70 };
+
+    double bias = +3.00;
+
+    double output = inputs[0] * weights[0] + inputs[1] * weights[1] + inputs[2] * weights[2] + bias;
 
     std::cout << output << std::endl;
 }
