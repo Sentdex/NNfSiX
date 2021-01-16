@@ -11,6 +11,6 @@ let weights = [|[|0.2; 0.8; -0.5; 1.0|];
 let bias = [|2.0; 3.0; 0.5|]
 
 let do_all inputs weights bias =
-  Array.map2 (fun w b -> dot_product inputs w b)  weights bias
+  Array.map2  (dot_product inputs)  weights bias
 
 let () = print_endline @@ [%show: float array]  @@ do_all inputs weights bias
