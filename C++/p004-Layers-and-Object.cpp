@@ -1,6 +1,6 @@
 /**
- * Creates a dense layer 
- * 
+ * Creates a dense layer
+ *
  * Associated tutorial https://www.youtube.com/watch?v=TEWy9vZcxW4
  */
 
