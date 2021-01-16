@@ -1,34 +1,34 @@
 (executable
- (public_name p001)
- (name p001)
- (libraries ppx_deriving nnfsix_utils)
+ (public_name p001-Basic-Neuron-3-inputs)
+ (name p001-Basic-Neuron-3-inputs)
+ (modules p001-Basic-Neuron-3-inputs)
  (preprocess (pps ppx_deriving.show ))
- (modules p001))
+ (libraries ppx_deriving))
+ 
+(executable
+ (public_name p002-Basic-Neuron-Layer)
+ (name p002-Basic-Neuron-Layer)
+ (modules p002-Basic-Neuron-Layer)
+ (preprocess (pps ppx_deriving.show ))
+ (libraries ppx_derivingn))
 
 (executable
- (public_name p002)
- (name p002)
- (modules p002)
+ (public_name p003-Dot-Product)
+ (name p003-Dot-Product)
+ (modules p003-Dot-Product)
  (preprocess (pps ppx_deriving.show ))
- (libraries ppx_derivingn nnfsix_utils))
+ (libraries ppx_deriving))
 
 (executable
- (public_name p003)
- (name dot_product)
- (modules dot_product)
+ (public_name p004-Layers-and-Object)
+ (name p004-Layers-and-Object)
+ (modules p004-Layers-and-Object)
  (preprocess (pps ppx_deriving.show ))
- (libraries ppx_deriving nnfsix_utils))
+ (libraries ppx_deriving))
 
 (executable
- (public_name p004)
- (name layers)
- (modules layers)
+ (public_name p005-ReLU-Activation)
+ (name p005-ReLU-Activation)
+ (modules p005-ReLU-Activation)
  (preprocess (pps ppx_deriving.show ))
- (libraries ppx_deriving nnfsix_utils))
-
-(executable
- (public_name p005)
- (name activation)
- (modules activation)
- (preprocess (pps ppx_deriving.show ))
- (libraries ppx_deriving nnfsix_utils))
+ (libraries ppx_deriving))

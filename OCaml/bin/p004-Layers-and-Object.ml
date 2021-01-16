@@ -1,8 +1,19 @@
-open Nnfsix_utils
-
-type layers = {weights: float array array; biases: float array}
+let (%) g f x = g (f x)
 
 let zeros n = Array.make n 0.
+
+let rand_1d n bound =
+  Array.init n @@ fun _ -> Random.float bound
+
+let rand_2d nx ny bound = 
+  Array.init nx
+    (fun _ -> rand_1d ny bound)
+
+let dot_product input weights bias =
+  Array.map2 ( *. ) input weights
+  |> Array.fold_left (+.) bias
+
+type layers = {weights: float array array; biases: float array}
 
 let make_layer n_inputs n_neurons =
   {weights = rand_2d n_neurons n_inputs 0.1; biases = zeros n_neurons}
