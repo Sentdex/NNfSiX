@@ -170,7 +170,7 @@ void actiavtion1(double *output){
     //*output = sigmoid(*output);
 }
 
-/**@brief Generate a randome range in a uniform distribution.
+/**@brief Generate a random range in a uniform distribution.
  * @Note Code was lifted from here https://stackoverflow.com/questions/11641629/generating-a-uniform-distribution-of-integers-in-c
  *
  * @param[in]   rangeLow   	Lowest value that in the range that can be genarated.
@@ -185,7 +185,7 @@ double uniform_distribution(double rangeLow, double rangeHigh) {
 }
 
 
-/**@brief Generate a randome range in a uniform distribution.
+/**@brief Generate a random range in a uniform distribution.
  * @Note Credit to shreeviknesh (#106) saved alot of time.
  *
  * @param[in]   points   	Number of points to generate per class.
