@@ -25,7 +25,7 @@ typedef struct{
     double *output;     /*Output of the neural layer*/
     int input_size;     /*Size of the input layer*/
     int output_size;    /*Size of the output layer*/
-	actiavtion_callback callback; /* Pionter to the callbacb used for the activation function */
+	actiavtion_callback callback; /* Pionter to the callback used for the activation function */
 }layer_dense_t;
 
 typedef struct{
