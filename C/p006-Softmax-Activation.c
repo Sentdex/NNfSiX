@@ -225,7 +225,7 @@ void spiral_data(int points,int classes,spiral_data_t *data){
 			// the below two statements achieve linspace-like functionality
 			r += 1.0f / (points - 1);
 			t += 4.0f / (points - 1);
-            iy++;
+            		iy++;
 			ix+=2; // increment index
 		}
 	}
