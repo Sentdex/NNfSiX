@@ -61,12 +61,11 @@ namespace NNFS_p005
             var y = V.Dense(points * classes); //at this point this is full of zeros
             for (int j = 0; j < classes; j++)
             {
-                var y_step = V.DenseOfArray(Generate.Step(points * classes, 1, (j+1) * points));
+                var y_step = V.DenseOfArray(Generate.Step(points * classes, 1, (j + 1) * points));
                 y = y + y_step;
             }
             var r = V.DenseOfArray(Generate.Sawtooth(points * classes, points, 0, 1));
-            var theta = 4*(r + y) +
-                        +0.2 * (2 * V.DenseOfArray(Generate.Uniform(points * classes)) - 1.0);
+            var theta = 4 * (r + y) + (V.DenseOfArray(Generate.Standard(points * classes)) * 0.2);
             var sin_theta = theta.PointwiseSin();
             var cos_theta = theta.PointwiseCos();
 
