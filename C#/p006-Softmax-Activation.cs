@@ -2,17 +2,20 @@
  * Class Definition of P.6 Softmax Activation
  * Based on nnfs.io by Harrison Kinsley & Daniel Kukiela
  * p006 from YT tutorial for the book: https://youtu.be/omz_NdFgWyU
+ * Contributed by T. Marin
+ *
  * spiral dataset code based on: https://gist.github.com/Sentdex/454cb20ec5acf0e76ee8ab8448e6266c
  * spiral dataset here defined as a function that returns a matrix X
  * 
  * Uses MathNet Numerics v4.15 by C.Ruegg, M. Cuda and J. Van Gael for vectors and matrix functions. 
  * To install in MSVS select Menu Project/Mangage NuGet packages...
  * in Browse tab search for MathNet.Numerics and install core package
+ * 
+ * Updated spiral dataset to use standard distribution as proposed by EdToro74
 */
 using System;
 using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.Statistics;
 
 
 namespace NNFS_p006
@@ -84,8 +87,7 @@ namespace NNFS_p006
                 y = y + y_step;
             }
             var r = V.DenseOfArray(Generate.Sawtooth(samples * classes, samples, 0, 1));
-            var theta = 4 * (r + y) +
-                        +0.2 * (2 * V.DenseOfArray(Generate.Uniform(samples * classes)) - 1.0);
+            var theta = 4 * (r + y) + (2 * V.DenseOfArray(Generate.Standard(samples * classes)) * 0.2);
             var sin_theta = theta.PointwiseSin();
             var cos_theta = theta.PointwiseCos();
 
