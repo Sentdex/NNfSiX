@@ -1,3 +1,4 @@
+Imports Accord.Math
 Module p004_Layers_and_Objects
     ' Translation from https://github.com/Sentdex/NNfSiX/blob/master/C%23/p004-Layers-and-Objects.cs
     Public Class Layer_Dense
