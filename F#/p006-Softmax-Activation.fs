@@ -35,9 +35,9 @@ type ActivationReLU() =
 
 type ActivationSoftmax() =
     static member Forward inputs = 
-        let inputs_s = inputs - np.max(inputs, 1, true)
+        let inputs_s = inputs - np.max(inputs, axis=1, keepdims=true)
         let exp_values = np.exp(&inputs_s)
-        exp_values / np.sum(&exp_values, 1, true)
+        exp_values / np.sum(&exp_values, axis=1, keepdims=true)
 
 let layer1 = LayerDense(2, 3)
 let layer2 = LayerDense(3, 3)
