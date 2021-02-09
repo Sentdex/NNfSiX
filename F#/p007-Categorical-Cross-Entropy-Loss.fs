@@ -1,3 +1,8 @@
+(*
+  Calculating the loss with Categorical Cross Entropy
+  Associated with YT NNFS tutorial: https://www.youtube.com/watch?v=dEXPMQXoiLc
+*)
+
 open type System.Math
 
 let softmax_output = [0.7; 0.1; 0.2]
