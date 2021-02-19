@@ -44,16 +44,16 @@ typedef struct{
  */
 
 double dot_product(double *input,double *weights,double *bias,int input_size,actiavtion_callback callback){
-    int i = 0;
-    double output = 0.0;
-    for(i = 0;i<input_size;i++){
-        output += input[i]*weights[i];
-    }
+	int i = 0;
+	double output = 0.0;
+	for(i = 0;i<input_size;i++){
+		output += input[i]*weights[i];
+	}
+	output += *bias;
 	if(callback != NULL){
-        callback(&output);
-    }
-    output += *bias;
-    return output;
+		callback(&output);
+	}
+	return output;
 }
 
 /**@brief Get the dot products of each neuron and add the bias and store it in an output array.
