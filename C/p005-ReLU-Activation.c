@@ -24,7 +24,7 @@ typedef struct{
     double *output;     /*Output of the neural layer*/
     int input_size;     /*Size of the input layer*/
     int output_size;    /*Size of the output layer*/
-	actiavtion_callback callback; /* Pionter to the callbacb used for the activation function */
+	actiavtion_callback callback; /* Pionter to the callback used for the activation function */
 }layer_dense_t;
 
 typedef struct{
@@ -43,16 +43,16 @@ typedef struct{
  */
 
 double dot_product(double *input,double *weights,double *bias,int input_size,actiavtion_callback callback){
-    int i = 0;
-    double output = 0.0;
-    for(i = 0;i<input_size;i++){
-        output += input[i]*weights[i];
-    }
+	int i = 0;
+	double output = 0.0;
+	for(i = 0;i<input_size;i++){
+		output += input[i]*weights[i];
+	}
+	output += *bias;
 	if(callback != NULL){
-        callback(&output);
-    }
-    output += *bias;
-    return output;
+		callback(&output);
+	}
+	return output;
 }
 
 /**@brief Get the dot products of each neuron and add the bias and store it in an output array.
@@ -169,7 +169,7 @@ void actiavtion1(double *output){
     //*output = sigmoid(*output);
 }
 
-/**@brief Generate a randome range in a uniform distribution.
+/**@brief Generate a random range in a uniform distribution.
  * @Note Code was lifted from here https://stackoverflow.com/questions/11641629/generating-a-uniform-distribution-of-integers-in-c
  *
  * @param[in]   rangeLow   	Lowest value that in the range that can be genarated.
@@ -184,7 +184,7 @@ double uniform_distribution(double rangeLow, double rangeHigh) {
 }
 
 
-/**@brief Generate a randome range in a uniform distribution.
+/**@brief Generate a random range in a uniform distribution.
  * @Note Credit to shreeviknesh (#106) saved alot of time.
  *
  * @param[in]   points   	Number of points to generate per class.
@@ -224,7 +224,7 @@ void spiral_data(int points,int classes,spiral_data_t *data){
 			// the below two statements achieve linspace-like functionality
 			r += 1.0f / (points - 1);
 			t += 4.0f / (points - 1);
-            iy++;
+			iy++;
 			ix+=2; // increment index
 		}
 	}
