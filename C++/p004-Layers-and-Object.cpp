@@ -46,14 +46,15 @@ dmatrix operator*(const dmatrix& m1, const dmatrix& m2) noexcept {
 // matrix vector addition
 dmatrix operator+(const dmatrix& m, const drow& row) noexcept {
     dmatrix     xm;
+    size_t sz = row.size();
     for (size_t j = 0; j < m.size(); j++) {
         xm.push_back({});
         for (size_t i = 0; i < m[j].size(); i++) {
-            if (j < row.size()) { //Sometimes m is bigger than row!
+            if (j < sz) { //Sometimes m is bigger than row!
                 xm[j].push_back(m[j][i] + row[j]);
             }
-            else { //If that happens then we just need to substract 1!
-                xm[j].push_back(m[j][i] + row[j-1]);
+            else { //If that happens then we clamp j
+                xm[j].push_back(m[j][i] + row[std::min(sz,j)-1]);
             }
         }
     }return xm;
