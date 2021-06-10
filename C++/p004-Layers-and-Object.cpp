@@ -29,22 +29,33 @@ dmatrix T(const dmatrix& m) noexcept {
 }
 // matrix multiplication
 dmatrix operator*(const dmatrix& m1, const dmatrix& m2) noexcept {
-    dmatrix m3 = T(m2);
     dmatrix rval;
-    for(size_t i=0; i<m1.size(); i++){
+    for (int i = 0; i < m1.size(); ++i) {
         rval.push_back({});
-        for(size_t j=0; j<m3.size(); j++){
-            rval[i].push_back(std::inner_product(m1[i].begin(), m1[i].end(), m3[j].begin(), 0.0));
+        for (int j = 0; j < m2[0].size(); ++j) {
+            double val = 0.0; //New inner loop added -> support for 4x5 * 5x2 mat for example! (before error)
+            for (int k = 0; k < m1[0].size(); ++k)
+            {
+                val += m1[i][k] * m2[k][j]; //Basically the same but now discretized
+            }
+            rval[i].push_back(val);
         }
-    }return rval;
+    }
+    return rval;
 }
 // matrix vector addition
 dmatrix operator+(const dmatrix& m, const drow& row) noexcept {
     dmatrix     xm;
-    for(size_t j=0; j<m.size(); j++){
+    size_t sz = row.size();
+    for (size_t j = 0; j < m.size(); j++) {
         xm.push_back({});
-        for(size_t i=0; i< m[j].size(); i++){
-            xm[j].push_back( m[j][i] + row[j]);
+        for (size_t i = 0; i < m[j].size(); i++) {
+            if (j < sz) { //Sometimes m is bigger than row!
+                xm[j].push_back(m[j][i] + row[j]);
+            }
+            else { //If that happens then we clamp j
+                xm[j].push_back(m[j][i] + row[std::min(sz,j)-1]);
+            }
         }
     }return xm;
 }
@@ -85,7 +96,7 @@ class dense_layer {
 
 int main(){
     dense_layer l1(4,5);
-    dense_layer l2(5,4);
+    dense_layer l2(5, 2);
 
     dmatrix X{
         drow{1, 2, 3, 2.5},
