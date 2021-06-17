@@ -77,48 +77,56 @@ func NewActivationSoftmax() *ActivationSoftmax {
 
 // Forward forwards the activation result
 func (a *ActivationSoftmax) Forward(input *mat.Dense) {
-	maxes := mat.NewVecDense(input.RawMatrix().Rows, nil)
-	exp_values := mat.NewDense(input.RawMatrix().Rows, input.RawMatrix().Cols, nil)
-	exp_values.Copy(input)
+	var rows int = input.RawMatrix().Rows
+	var cols int = input.RawMatrix().Cols
 
-	for i := 0; i < input.RawMatrix().Rows; i++ {
+	maxes := mat.NewVecDense(rows, nil)
+	exp_values := mat.NewDense(rows, cols, nil)
+
+	for i := 0; i < rows; i++ {
 		var curr_max float64 = math.Inf(-1)
-		for j := 0; j < input.RawMatrix().Cols; j++ {
+		for j := 0; j < cols; j++ {
 			if curr_max < input.At(i, j) {
 				curr_max = input.At(i, j)
 			}
 		}
 	}
 
-	for i := 0; i < input.RawMatrix().Rows; i++ {
-		for j := 0; j < input.RawMatrix().Cols; j++ {
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
 			exp_values.Set(i, j, math.Pow(math.E, input.At(i, j)-maxes.AtVec(i)))
 		}
 	}
 
-	a.Output = mat.NewDense(input.RawMatrix().Rows, input.RawMatrix().Cols, nil)
-	for i := 0; i < input.RawMatrix().Rows; i++ {
-		for j := 0; j < input.RawMatrix().Cols; j++ {
-			x := input.At(i, j)
-			if x > 0 {
-				a.Output.Set(i, j, x)
-			} else {
-				a.Output.Set(i, j, 0)
-			}
+	probabilities := mat.NewDense(rows, cols, nil)
+
+	for i := 0; i < rows; i++ {
+		var curr_sum float64 = 0
+		for j := 0; j < cols; j++ {
+			curr_sum += exp_values.At(i, j)
+		}
+		for j := 0; j < cols; j++ {
+			probabilities.Set(i, j, exp_values.At(i, j)/curr_sum)
 		}
 	}
+
+	a.Output = probabilities
 }
 
 
 func main() {
-	X, y := NewSpiralData(100, 3)
-	layer1 := NewLayerDense(2, 5)
-	activation1 := NewActivationRelu()
+	X, _ := NewSpiralData(100, 3)
 
-	layer1.Forward(X)
-	// fmt.Println(layer1.Output)
-	activation1.Forward(layer1.Output)
-	fmt.Println(activation1.Output)
+	dense1 := NewLayerDense(2, 3)
+	activation1 := NewActivationRelu()
+	dense2 := NewLayerDense(3, 3)
+	activation2 := NewActivationSoftmax()
+
+	dense1.Forward(X)
+	activation1.Forward(dense1.Output)
+	dense2.Forward(activation1.Output)
+	activation2.Forward(dense2.Output)
+	fmt.Println(activation2.Output)
 }
 
 // NewSpiralData generates spiral data. see: https://cs231n.github.io/neural-networks-case-study/
