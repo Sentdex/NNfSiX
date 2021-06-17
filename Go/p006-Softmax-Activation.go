@@ -115,6 +115,7 @@ func (a *ActivationSoftmax) Forward(input *mat.Dense) {
 
 
 func main() {
+	rand.Seed(0)
 	X, _ := NewSpiralData(100, 3)
 
 	dense1 := NewLayerDense(2, 3)
