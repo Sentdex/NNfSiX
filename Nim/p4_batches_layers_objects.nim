@@ -1,44 +1,40 @@
 # understanding batches, layers, objects
 # video ref: https://youtu.be/TEWy9vZcxW4
 
-import neo
-
-let
-    X = matrix(@[
-        @[1.0, 2.0, 3.0, 2.5],
-        @[2.0, 5.0, -1.0, 2.0],
-        @[-1.5, 2.7, 3.3, -0.8]])
-
+import libs/common
 
 type
     LayerDense = ref object
-        weights :Matrix[float64]
-        biases :Vector[float64]
-        output :Matrix[float64]
+        weights: Matrix
+        biases: Vector
+        output: Matrix
 
-proc initLayerDense(inputs, neurons :int) :LayerDense =
+proc layerDense(inputs, neurons: int, max: SomeFloat = 0.1): LayerDense =
     new result
-    result.weights = randomMatrix(inputs, neurons, max=0.10)# no need for transposing since we control the initialization
+    result.weights = randomMatrix(inputs, neurons, max)# no need for transposing since we control the initialization
     result.biases = zeros(neurons)
 
-proc forward(layer :LayerDense, inputs :Matrix[float64]) =
-    layer.output = inputs * layer.weights
-    for i,val in layer.output: #adds biases value by value in the matrix, haven't better solution
-        layer.output[i[0],i[1]] = layer.output[i[0],i[1]] + layer.biases[i[1]]
+proc forward(layer: LayerDense, inputs: Matrix) =
+    layer.output = dot(inputs, layer.weights) + layer.biases
+
+
+var X = matrix(@[
+    @[1.0, 2.0, 3.0, 2.5],
+    @[2.0, 5.0, -1.0, 2.0],
+    @[-1.5, 2.7, 3.3, -0.8]])
 
 var
-    layer1 = initLayerDense(4,5)
-    layer2 = initLayerDense(5,2)
+    layer1 = layerDense(4,5)
+    layer2 = layerDense(5,2)
 
 layer1.forward(X)
 layer2.forward(layer1.output)
 
 echo layer2.output
 
-
 # ---------- The code below is for the tutorial before creating objects ----------
 
-# let
+# var
 #     inputs = matrix(@[
 #         @[1.0, 2.0, 3.0, 2.5],
 #         @[2.0, 5.0, -1.0, 2.0],
@@ -58,19 +54,10 @@ echo layer2.output
 
 #     biases2 = vector([-1.0, 2.0, -0.5])
 
-
-# proc dotProduct(inputs, weights :Matrix, biases :Vector) :Matrix =
-#     result = inputs * weights
-#     for i,val in result: #adds biases value by value in the matrix, haven't better solution
-#         result[i[0],i[1]] = result[i[0],i[1]] + biases[i[1]]
-
-
-# var layer1_outputs = inputs.dotProduct(weights.T, biases=biases)
-# # notice `weights.T`, .T is for hard transpose & .t is for soft transpose
-# # ref: https://github.com/unicredit/neo#blas-operations
-
-# var layer2_outputs = layer1_outputs.dotProduct(weights2.T, biases=biases2)
-
+# weights.t
+# var layer1_outputs = dot(inputs, weights) + biases
+# weights2.t
+# var layer2_outputs = dot(layer1_outputs, weights2) + biases2
 # echo layer2_outputs
 #  #layer2_outputs:
 # # [ [ 0.5030999999999999  -1.04185        -2.03875 ]
