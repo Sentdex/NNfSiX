@@ -1,13 +1,9 @@
 # understanding the "dot product"
 # video ref: https://youtu.be/tMrbN67U9d4
 
-import neo
-# Nim's equivalent to Python's Numpy (linear algebra operations)
-# repo: https://github.com/unicredit/neo
-# we're using BLAS operations from wrapped BLAS libraries
-# ref: https://github.com/unicredit/neo#blas-operations
+import libs/common
 
-let
+var
     inputs = vector([1.0, 2.0, 3.0, 2.5])
     weights = matrix(@[
         @[0.2, 0.8, -0.5, 1.0],
@@ -16,17 +12,7 @@ let
 
     biases = vector([2.0, 3.0, 0.5])
 
+var outputLayer = dot(weights, inputs) + biases
 
-proc dotProduct(weights :Matrix, inputs, biases :Vector) :Vector =
-    result = weights * inputs
-        # the `*` operation w/ Neo can get:
-        #   - dot product of two Vectors
-        #   - Matrix-Vector product
-        #   - Matrix-Matrix product
-    result += biases # the `+` operation can work w/ 2 Matrix or 2 Vectors
-
-
-var output = weights.dotProduct(inputs, biases=biases)
-
-echo output
-# [4.8, 1.21, 2.385]
+echo outputLayer
+# [ 4.8   1.21    2.385 ] #sentdex
