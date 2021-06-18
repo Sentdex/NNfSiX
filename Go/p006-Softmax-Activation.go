@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+
 	"gonum.org/v1/gonum/mat"
 )
 
