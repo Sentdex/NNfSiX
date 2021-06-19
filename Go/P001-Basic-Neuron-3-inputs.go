@@ -4,7 +4,9 @@ Associated YT NNFS tutorial: https://www.youtube.com/watch?v=Wo5dMEP_BbI
 */
 package main
 
-import ("fmt")
+import (
+	"fmt"
+)
 
 func main() {
   inputs := [3]float64{1.2, 5.1, 2.1}
