@@ -78,7 +78,7 @@ extension Loss {
         let data_loss = sample_losses.mean
         return data_loss
     }
-    func calculatedoub(output:[[Double]], y:[[Int]]) -> Double {
+    func calculate(output:[[Double]], y:[[Int]]) -> Double {
         let sample_losses = self.forward(y_pred: output, y_true: y)
         let data_loss = sample_losses.mean
         return data_loss
