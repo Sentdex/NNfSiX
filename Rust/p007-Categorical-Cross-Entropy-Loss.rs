@@ -9,6 +9,6 @@ fn main() {
 
     println!("{}", loss);
 
-    println!("{}", -0.7_f64.ln());
-    println!("{}", -0.5_f64.ln());
+    println!("{}", -(0.7_f64.ln()));
+    println!("{}", -(0.5_f64.ln()));
 }
