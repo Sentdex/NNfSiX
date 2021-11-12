@@ -3,7 +3,7 @@ Creates a dense layer of neurons with a ReLU activation function, and feeds forw
 Associated YT tutorial: https://www.youtu.be/gmjzbpSVY1A
 */
 
-const math = require("mathjs");
+//const math = require("mathjs");
 
 // Moved this code from spiral-data.js written by @vancegillies
 // Updated by @daniel-kukiela
@@ -47,7 +47,7 @@ class Layer_Dense {
 		this.weights = math.random([n_inputs, n_neurons], -1.0, 1.0);
 		this.biases = math.zeros(1, n_neurons);
 	}
-	
+
 	forward (inputs) {
 		var biasesmat = this.biases;
 		// Since only adding matrices elementwise is supported, you need to make the biases into a matrix and not a vector.
@@ -58,13 +58,13 @@ class Layer_Dense {
 
 class Activation_ReLU {
 	constructor () {}
-	
+
 	forward (inputs) {
 		this.output = math.matrix(inputs._data.map(layer => layer.map(i => i<0?0:i)));
 	}
 }
 
-var layer1 = new Layer_Dense(4, 5);
+var layer1 = new Layer_Dense(2, 5);
 var activation1 = new Activation_ReLU();
 
 layer1.forward(X);

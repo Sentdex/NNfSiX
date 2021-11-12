@@ -5,7 +5,7 @@
 * Link to the series on youtube: https://www.youtube.com/watch?v=Wo5dMEP_BbI&list=PLQVvvaa0QuDcjD5BAw2DxE6OF2tius3V3
 */
 
-const math = require("mathjs");
+// const math = require("mathjs");
 
 // Moved this code from spiral-data.js written by @vancegillies
 // Updated by @daniel-kukiela
@@ -42,22 +42,9 @@ function spiral_data(points, classes) {
 
 let [X, y] = spiral_data(100, 3);
 
-
-
-
-
-// no randn equivalent in JS, so boxMueller transform necessary to pull appropriate values from normal distribution
-// https://stackoverflow.com/questions/25582882/javascript-math-random-normal-distribution-gaussian-bell-curve
-// Standard Normal variate using Box-Muller transform.
-function randn_bm(n_inputs, n_neurons) {
-    var u = n_inputs;
-    var v = n_neurons;
-    return math.sqrt( -2.0 * math.log( u ) ) * math.cos( 2.0 * math.PI * v );
-}
-
 class Layer_Dense {
   constructor (n_inputs, n_neurons){
-    this.weights = 0.1 * randn_bm(n_inputs, n_neurons);
+    this.weights = math.random([n_inputs, n_neurons], -1.0, 1.0);
     this.biases = math.zeros(1, n_neurons);
   }
 
@@ -71,14 +58,14 @@ class Layer_Dense {
 
 class Activation_ReLU {
   forward (inputs) {
-    this.output = math.max(0, inputs);
+		this.output = math.matrix(inputs._data.map(layer => layer.map(i => i<0?0:i)));
   }
 }
 
 class Activation_Softmax {
   forward (inputs) {
-    let exp_values = math.exp(inputs - math.max(inputs, axis=1, keepdims=True));
-    let probabilities = exp_values / math.sum(exp_values, axis=1, keepdims=True);
+    let exp_values = math.exp(inputs - math.max.apply(null, inputs));
+    let probabilities = exp_values / math.sum(exp_values);
     this.output = probabilities;
   }
 }
