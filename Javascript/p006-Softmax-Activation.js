@@ -64,9 +64,25 @@ class Activation_ReLU {
 
 class Activation_Softmax {
   forward (inputs) {
-    let exp_values = math.exp(inputs - math.max.apply(null, inputs));
-    let probabilities = exp_values / math.sum(exp_values);
-    this.output = probabilities;
+    let exp_values = new Array;
+
+    inputs.forEach ((input) => {
+      if (Array.isArray(input)) {
+        input.forEach ((element) => {
+          exp_values.push(math.exp(element));
+        });
+      }
+      exp_values.push(math.exp(input));
+    });
+
+    let norm_base = math.sum(exp_values);
+    let norm_values = new Array;
+
+    exp_values.forEach ((element) => {
+      norm_values.push(element / norm_base);
+    });
+
+    this.output = norm_values;
   }
 }
 
