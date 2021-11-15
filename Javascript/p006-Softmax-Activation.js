@@ -1,9 +1,11 @@
-/*
-Creates a dense layer of neurons with a ReLU activation function, and feeds forward inputs through them.
-Associated YT tutorial: https://www.youtu.be/gmjzbpSVY1A
+/* This is a javascript implementation of neural networks from scratch in python  series.
+*
+*The part 6 bits i.e Softmax activation struct is declared and defined after line 718
+*
+* Link to the series on youtube: https://www.youtube.com/watch?v=Wo5dMEP_BbI&list=PLQVvvaa0QuDcjD5BAw2DxE6OF2tius3V3
 */
 
-//const math = require("mathjs");
+// const math = require("mathjs");
 
 // Moved this code from spiral-data.js written by @vancegillies
 // Updated by @daniel-kukiela
@@ -38,36 +40,63 @@ function spiral_data(points, classes) {
   return [math.matrix(X), math.matrix(y)];
 }
 
-// Updated to use the spiral_data function
-// Updated by @daniel-kukiela
 let [X, y] = spiral_data(100, 3);
 
 class Layer_Dense {
-	constructor (n_inputs, n_neurons) {
-		this.weights = math.random([n_inputs, n_neurons], -1.0, 1.0);
-		this.biases = math.zeros(1, n_neurons);
-	}
+  constructor (n_inputs, n_neurons){
+    this.weights = math.random([n_inputs, n_neurons], -1.0, 1.0);
+    this.biases = math.zeros(1, n_neurons);
+  }
 
-	forward (inputs) {
-		var biasesmat = this.biases;
+  forward (inputs) {
+    var biasesmat = this.biases;
 		// Since only adding matrices elementwise is supported, you need to make the biases into a matrix and not a vector.
 		for (var i=0; i<inputs.size()[0]-1;i++) {biasesmat=math.concat(biasesmat, this.biases, 0);}
 		this.output = math.add(math.multiply(inputs, this.weights), biasesmat);
-	}
+  }
 }
 
 class Activation_ReLU {
-	constructor () {}
-
-	forward (inputs) {
+  forward (inputs) {
 		this.output = math.matrix(inputs._data.map(layer => layer.map(i => i<0?0:i)));
-	}
+  }
 }
 
-var layer1 = new Layer_Dense(2, 5);
+class Activation_Softmax {
+  forward (inputs) {
+    let exp_values = new Array;
+
+    inputs.forEach ((input) => {
+      if (Array.isArray(input)) {
+        input.forEach ((element) => {
+          exp_values.push(math.exp(element));
+        });
+      }
+      exp_values.push(math.exp(input));
+    });
+
+    let norm_base = math.sum(exp_values);
+    let norm_values = new Array;
+
+    exp_values.forEach ((element) => {
+      norm_values.push(element / norm_base);
+    });
+
+    this.output = norm_values;
+  }
+}
+
+var dense1 = new Layer_Dense(2, 3);
 var activation1 = new Activation_ReLU();
 
-layer1.forward(X);
-//console.log(layer1.output);
-activation1.forward(layer1.output);
-console.log(activation1.output);
+var dense2 = new Layer_Dense(3, 3);
+var activation2 = new Activation_Softmax();
+
+
+dense1.forward(X);
+activation1.forward(dense1.output);
+
+dense2.forward(activation1.output);
+activation2.forward(dense2.output);
+
+console.log(activation2.output);
