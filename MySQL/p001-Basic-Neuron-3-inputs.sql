@@ -4,10 +4,10 @@
 -- Associated YT NNFS tutorial: https://www.youtube.com/watch?v=Wo5dMEP_BbI
 --
 
-DROP DATABASE IF EXISTS `P001BasicNeuron3Inputs`;
-CREATE DATABASE `P001BasicNeuron3Inputs`;
+DROP DATABASE IF EXISTS `p001_basic_neuron_3_inputs`;
+CREATE DATABASE `p001_basic_neuron_3_inputs`;
 
-USE `P001BasicNeuron3Inputs`;
+USE `p001_basic_neuron_3_inputs`;
 
 CREATE TABLE `inputs`
 (
