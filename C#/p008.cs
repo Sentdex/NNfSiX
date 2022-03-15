@@ -1,5 +1,5 @@
 ﻿/*
- * Class Definition of P.8 Loss and Categorical Cross Entropy Loss
+ * Class Definition of P.8 Loss, Categorical Cross Entropy Loss subclass and accuracy calculation
  * Based on nnfs.io by Harrison Kinsley & Daniel Kukiela
  * p008 from YT tutorial for the book: https://youtu.be/levekYbxauw
  * spiral dataset code based on: https://gist.github.com/Sentdex/454cb20ec5acf0e76ee8ab8448e6266c
@@ -64,10 +64,14 @@ namespace NNFS_p008
             Console.WriteLine($"activation2, outputs:{activation2.output.ToString(5, activation2.output.ColumnCount)}");
 
             //Calculates loss
-            Console.WriteLine("\nCalculate loss:");
+            Console.WriteLine("\nCalculate loss and accuracy:");
             
             var loss = loss_function.Calculate(activation2.output, y);
             Console.WriteLine($"Categorical Cross Entropy Loss: {loss}");
+
+            //Get accuracy from loss_function object
+            var acc = loss_function.accuracy;
+            Console.WriteLine($"accuracy: {acc}");
 
             Console.ReadLine();
         }
@@ -181,6 +185,7 @@ namespace NNFS_p008
         //attributes
         public Vector<double> sample_losses { get; set; }
         public double data_loss { get; set; }
+        public double accuracy { get; set; }
         //Getter and setters:
         
         //Methods:
@@ -190,16 +195,45 @@ namespace NNFS_p008
         //class categories as scalar vector or as a 1-hot encoded matrix
         public double Calculate(Matrix<double> output, Vector<double> y)
         {
-            //output is matrix 
+            //Calculates and return data loss:
+            var V = Vector<double>.Build;
             var data_loss_vector = forward(output, y);
             data_loss = data_loss_vector.Average();
+
+            //Calculate accuracy:
+            //Creates a vector with the positions of the predicitions for each row in softmax_output (argmax axis=1)
+            var preditions = V.Dense(output.RowCount);
+            var compare = V.Dense(output.RowCount, 0);
+            for (int i = 0; i < output.RowCount; i++)
+            {
+                preditions[i] = output.Row(i).MaximumIndex(); //this is equivalent to argmax in a single row
+                if (preditions[i] == y[i])
+                {
+                    compare[i] = 1;
+                }
+            }
+            accuracy = compare.Average();
             return data_loss;
         }
         public double Calculate(Matrix<double> output, Matrix<double> y)
         {
-            //output is matrix 
+            //Calculates and return data loss:
+            var V = Vector<double>.Build;
             var data_loss_vector = forward(output, y);
             data_loss = data_loss_vector.Average();
+            //Calculate accuracy:
+            //Creates a vector with the positions of the predicitions for each row in softmax_output (argmax axis=1)
+            var preditions = V.Dense(output.RowCount);
+            var compare = V.Dense(output.RowCount, 0);
+            for (int i = 0; i < output.RowCount; i++)
+            {
+                preditions[i] = output.Row(i).MaximumIndex();
+                if (preditions[i] == y.Row(i).MaximumIndex())
+                {
+                    compare[i] = 1;
+                }
+            }
+            accuracy = compare.Average();
             return data_loss;
         }
 
