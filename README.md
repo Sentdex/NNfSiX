@@ -11,7 +11,7 @@ The plan is to share code from video part #s. We will be updating the Python var
 
 Before submitting a PR, check to see if there's already a PR from someone for that specific part # and language.
 
-Submission for given part number should be complete in a single file, ie. should not be split across multiple files. This makes it easier for us to maintain the repository amd easier for others to follow.
+Submission for given part number should be complete in a single file, ie. should not be split across multiple files. This makes it easier for us to maintain the repository and easier for others to follow.
 
 If you want to submit solutions in multiple languages, or your submission adds new files and changes files of someone else, create separate PRs for these cases.
 
