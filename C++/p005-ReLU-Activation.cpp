@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
+#include <tuple>
 
 using dmatrix   = std::vector< std::vector< double> > ; // dmatrix stands for dynamic matrix
 using drow      = std::vector< double > ;    // drow stands for dynamic row
