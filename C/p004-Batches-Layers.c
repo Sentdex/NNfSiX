@@ -83,17 +83,17 @@ void layer_init(layer_dense_t *layer,int intput_size,int output_size){
     layer->output_size = output_size;
 
     //create data as a flat 1-D dataset
-    layer->weights = malloc(sizeof(double) * intput_size * output_size);
+    layer->weights =(double *) malloc(sizeof(double) * intput_size * output_size);
     if(layer->weights == NULL){
         printf("weights mem error\n");
         return;
     }
-    layer->biase   = malloc(sizeof(double) * output_size);
+    layer->biase   = (double *)malloc(sizeof(double) * output_size);
     if(layer->biase == NULL){
         printf("biase mem error\n");
         return;
     }
-    layer->output = malloc(sizeof(double) * output_size);
+    layer->output = (double *)malloc(sizeof(double) * output_size);
 
     if(layer->output == NULL){
         printf("output mem error\n");
@@ -117,7 +117,7 @@ void deloc_layer(layer_dense_t *layer){
     if(layer->biase != NULL){
         free(layer->biase);
     }
-    if(layer->biase != NULL){
+    if(layer->output != NULL){
         free(layer->output);
     }
 }
