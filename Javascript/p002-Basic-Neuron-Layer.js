@@ -5,14 +5,14 @@
  * 
  */
 
-const inputs   = [1.0, 2.0, 3.0, 2.5];
+const inputs   = [1, 2, 3, 2.5];
 
-const weights1 = [ 0.2,   0.8,  -0.5,   1.0 ];
+const weights1 = [ 0.2,   0.8,  -0.5,   1   ];
 const weights2 = [ 0.5,  -0.91,  0.26, -0.5 ];
 const weights3 = [-0.26, -0.27,  0.17,  0.87];
 
-const bias1    = 2.0;
-const bias2    = 3.0;
+const bias1    = 2;
+const bias2    = 3;
 const bias3    = 0.5;
 
 const output = [
