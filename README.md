@@ -18,4 +18,6 @@ If you want to submit solutions in multiple languages, or your submission adds n
 We will be accepting PRs in the following ways:
 
 1. Prioritizing the already-established people who have contributed to that language already.
-2. Prioritizing by who submits first. 
+2. Prioritizing by who submits first.
+
+3. just a check up
