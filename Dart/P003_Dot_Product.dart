@@ -20,7 +20,8 @@ void main() {
   print(finalOutputs);
 }
 
-List<double> dotProduct({List<List<double>> weights, List<double> inputs}) {
+List<double> dotProduct(
+    {required List<List<double>> weights, required List<double> inputs}) {
   List<double> layerOutputs = [];
 
   for (List<double> singleWeight in weights) {
@@ -34,7 +35,8 @@ List<double> dotProduct({List<List<double>> weights, List<double> inputs}) {
   return layerOutputs;
 }
 
-List<double> addVectors({List<double> interOutputs, List<double> biases}) {
+List<double> addVectors(
+    {required List<double> interOutputs, required List<double> biases}) {
   List<double> output = [];
 
   for (int i = 0; i < interOutputs.length; i++) {
