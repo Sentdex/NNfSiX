@@ -1,3 +1,8 @@
+"""
+Applying Categorical Cross Entropy loss to our NNFS framework
+Associated with YT NNFS tutorial: https://www.youtube.com/watch?v=levekYbxauw&list=PLQVvvaa0QuDcjD5BAw2DxE6OF2tius3V3&index=8
+"""
+
 # Usings.
 using Random
 using Statistics
